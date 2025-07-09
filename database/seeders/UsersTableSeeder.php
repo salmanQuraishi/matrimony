@@ -1,0 +1,32 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+
+class UsersTableSeeder extends Seeder
+{
+    public function run()
+    {
+        $users = [
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@gmail.com',
+                'mobile' => '7409214495',
+                'password' => Hash::make('123456'),
+            ],
+            [
+                'name' => 'Test User',
+                'mobile' => '9149089862',
+                'password' => Hash::make('123456'),
+            ],
+        ];
+
+        foreach ($users as $user) {
+            User::create($user);
+        }
+    }
+}
+
