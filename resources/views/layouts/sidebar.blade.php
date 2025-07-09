@@ -86,13 +86,16 @@
                 </div>
               </li>
               <li class="nav-item">
-                <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <a href="#" class="nav-link"
+                  onclick="event.preventDefault(); confirmLogout();">
                     <i class="fas fa-sign-out-alt"></i>
                     <p>Logout</p>
                 </a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                  @csrf
+                    @csrf
                 </form>
+              </li>
+
               </li>
             </ul>
           </div>
@@ -191,7 +194,7 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Account Setting</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); confirmLogout();">Logout</a>
                       </li>
                     </div>
                   </ul>

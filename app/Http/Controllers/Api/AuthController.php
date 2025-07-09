@@ -326,6 +326,39 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    public function getUser(Request $request)
+    {
+        try {
+            $request->headers->set('Accept', 'application/json');
+
+            $user = $request->user();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'User Data',
+                'user' => UserController::formatUserResponse($user->id),
+            ], 200);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'error'  => 'An unexpected error occurred.',
+            ], 500);
+        }
+    }
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
