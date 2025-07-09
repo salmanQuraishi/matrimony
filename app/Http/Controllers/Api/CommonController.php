@@ -34,10 +34,15 @@ class CommonController extends Controller
     public function getCaste(Request $request)
     {
         try {
-            
-            $religionId = $request->religion;
+            $request->validate([
+                'religionid' => ['required', 'integer', 'exists:religions,id'],
+            ]);
 
-            $Caste = Caste::where('religionid',$religionId)->where('status', 'show')->get(['cid','name','description']);
+            $religionId = $request->religionid;
+
+            $Caste = Caste::where('religionid', $religionId)
+                        ->where('status', 'show')
+                        ->get(['cid', 'name', 'description']);
 
             if ($Caste->isEmpty()) {
                 return MethodController::errorResponse('Caste Data not found', 404);
@@ -45,6 +50,8 @@ class CommonController extends Controller
 
             return MethodController::successResponse('Caste Data', $Caste);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return MethodController::errorResponse($e->errors(), 422);
         } catch (\Exception $e) {
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }

@@ -156,14 +156,14 @@ class AuthController extends Controller
         try {
             $request->headers->set('Accept', 'application/json');
 
+            $user = $request->user();
+
             $request->validate([
                 'dob' => 'required', 'date',
                 'age' => 'required', 'integer', 'min:0',
-                'email' => 'required|email|unique:users,email',
+                'email' => 'required|email|unique:users,email,' . $user->id,
                 'gender' => 'required', 'in:male,female,other',
             ]);
-
-            $user = $request->user();
 
             $user->age = $request->age;
             $user->dob = date('Y-m-d', strtotime($request->dob));
