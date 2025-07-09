@@ -12,7 +12,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\MethodController;
 
 class AuthController extends Controller
 {
@@ -36,7 +36,7 @@ class AuthController extends Controller
 
         try {
             $user = User::create([
-                'dummyid' => UserController::generateUniqueDummyId('WEB', 6),
+                'dummyid' => MethodController::generateUniqueDummyId('WEB', 6),
                 'profile_for' => $request->profile_for,
                 'name' => $request->name,
                 'mobile' => $request->mobile,
@@ -49,7 +49,7 @@ class AuthController extends Controller
                 'status' => true,
                 'message' => 'Registration successful',
                 'token' => 'Bearer ' . $token,
-                'user' => UserController::formatUserResponse($user->id),
+                'user' => MethodController::formatUserResponse($user->id),
             ]);
 
         } catch (\Exception $e) {
@@ -111,7 +111,7 @@ class AuthController extends Controller
             'status' => true,
             'message' => 'Login successful',
             'token' => 'Bearer ' . $token,
-            'user' => UserController::formatUserResponse($user->id),
+            'user' => MethodController::formatUserResponse($user->id),
         ]);
     }
     public function changePassword(Request $request)
@@ -343,7 +343,7 @@ class AuthController extends Controller
             return response()->json([
                 'status'  => true,
                 'message' => 'User Data',
-                'user' => UserController::formatUserResponse($user->id),
+                'user' => MethodController::formatUserResponse($user->id),
             ], 200);
 
         } catch (ValidationException $e) {

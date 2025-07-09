@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 
-class UserController extends Controller
+class MethodController extends Controller
 {
     public static function formatUserResponse($user)
     {
@@ -41,8 +41,23 @@ class UserController extends Controller
         } while (
             User::where('dummyid', $dummyId)->exists()
         );
-
         return $dummyId;
+    }
+    public static function successResponse($message, $data)
+    {
+        return response()->json([
+            'status' => true,
+            'message' => $message,
+            'data' => $data,
+        ], 200);
+    }
+
+    public static function errorResponse($message = 'Something went wrong', $status = 404)
+    {
+        return response()->json([
+            'status' => false,
+            'message' => $message,
+        ], $status);
     }
 
 }

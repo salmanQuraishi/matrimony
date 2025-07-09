@@ -2,8 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CommonController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -12,6 +12,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::get('/get/religion/list', [CommonController::class, 'getReligion']);
+Route::get('/get/caste/list/{religion}', [CommonController::class, 'getCaste']);
+Route::get('/get/profilefor/list', [CommonController::class, 'getProfileFor']);
+Route::get('/get/education/list', [CommonController::class, 'getEducation']);
+Route::get('/get/occupation/list', [CommonController::class, 'getOccupation']);
+Route::get('/get/annual/income/list', [CommonController::class, 'getAnnualIncome']);
+Route::get('/get/job/type/list', [CommonController::class, 'getJobType']);
+Route::get('/get/company/type/list', [CommonController::class, 'getCompanyType']);
 
 Route::middleware('auth:sanctum')->group(function () {
 
