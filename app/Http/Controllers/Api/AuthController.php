@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Api\UserController;
 
@@ -37,6 +36,7 @@ class AuthController extends Controller
 
         try {
             $user = User::create([
+                'dummyid' => UserController::generateUniqueDummyId('WEB', 6),
                 'profile_for' => $request->profile_for,
                 'name' => $request->name,
                 'mobile' => $request->mobile,
@@ -157,10 +157,10 @@ class AuthController extends Controller
             $request->headers->set('Accept', 'application/json');
 
             $request->validate([
-                'dob' => ['required', 'date'],
-                'age' => ['required', 'integer', 'min:0'],
-                'email' => ['required','email'],
-                'gender' => ['required', 'in:male,female,other'],
+                'dob' => 'required', 'date',
+                'age' => 'required', 'integer', 'min:0',
+                'email' => 'required|email|unique:users,email',
+                'gender' => 'required', 'in:male,female,other',
             ]);
 
             $user = $request->user();
@@ -365,5 +365,4 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Logged out']);
     }
-
 }

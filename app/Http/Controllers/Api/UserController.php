@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\User;
 
 class UserController extends Controller
@@ -13,6 +12,7 @@ class UserController extends Controller
         $user = User::with('profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste')->where('id', $user)->first();
         
         return [
+            'dummyid' => $user->dummyid ?? null,
             'name' => $user->name ?? null,
             'email' => $user->email ?? null,
             'mobile' => $user->mobile ?? null,
@@ -33,4 +33,16 @@ class UserController extends Controller
             'caste' => $user->caste ?? null,
         ];
     }
+    public static function generateUniqueDummyId($prefix = 'WEB', $length = 6)
+    {
+        do {
+            $randomNumber = str_pad(mt_rand(0, pow(10, $length) - 1), $length, '0', STR_PAD_LEFT);
+            $dummyId = $prefix . $randomNumber;
+        } while (
+            User::where('dummyid', $dummyId)->exists()
+        );
+
+        return $dummyId;
+    }
+
 }
