@@ -9,7 +9,7 @@ class MethodController extends Controller
 {
     public static function formatUserResponse($user)
     {
-        $user = User::with('profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste')->where('id', $user)->first();
+        $user = User::with('profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste','state','city')->where('id', $user)->first();
         
         return [
             'dummyid' => $user->dummyid ?? null,
@@ -31,6 +31,8 @@ class MethodController extends Controller
             'companyType' => $user->companyType ?? null,
             'relegion' => $user->religion ?? null,
             'caste' => $user->caste ?? null,
+            'state' => $user->state ?? null,
+            'city' => $user->city ?? null,
         ];
     }
     public static function generateUniqueDummyId($prefix = 'WEB', $length = 6)

@@ -49,7 +49,11 @@ class AuthController extends Controller
                 'status' => true,
                 'message' => 'Registration successful',
                 'token' => 'Bearer ' . $token,
-                'user' => MethodController::formatUserResponse($user->id),
+                'user' => [
+                    'dummyid' => $user->dummyid,
+                    'name'  => $user->name,
+                    'mobile' => $user->mobile,
+                ],
             ]);
 
         } catch (\Exception $e) {
@@ -111,7 +115,11 @@ class AuthController extends Controller
             'status' => true,
             'message' => 'Login successful',
             'token' => 'Bearer ' . $token,
-            'user' => MethodController::formatUserResponse($user->id),
+            'user' => [
+                'dummyid' => $user->dummyid,
+                'name'  => $user->name,
+                'mobile' => $user->mobile,
+            ],
         ]);
     }
     public function changePassword(Request $request)

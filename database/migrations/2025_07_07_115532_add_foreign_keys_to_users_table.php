@@ -10,6 +10,14 @@ class AddForeignKeysToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             
+            // State
+            $table->unsignedBigInteger('state_id')->default(0)->after('id');
+            $table->foreign('state_id')->references('sid')->on('state')->onDelete('set null');
+
+            // State
+            $table->unsignedBigInteger('city_id')->default(0)->after('id');
+            $table->foreign('city_id')->references('cityid')->on('city')->onDelete('set null');
+            
             // Relation
             $table->unsignedBigInteger('profile_for')->default(0)->after('id');
             $table->foreign('profile_for')->references('ptid')->on('profile_types')->onDelete('set null');
@@ -48,6 +56,12 @@ class AddForeignKeysToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
+
+            $table->dropForeign(['state_id']);
+            $table->dropColumn('state_id');
+
+            $table->dropForeign(['city_id']);
+            $table->dropColumn('city_id');
 
             $table->dropForeign(['religion_id']);
             $table->dropColumn('religion_id');

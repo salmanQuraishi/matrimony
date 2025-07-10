@@ -18,6 +18,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'city_id',
+        'state_id',
         'dummyid',
         'company_type_id',
         'job_type_id',
@@ -91,6 +93,16 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Caste::class, 'caste_id', 'cid')
                     ->select('cid', 'name');
+    }
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'state_id', 'sid')
+                    ->select('sid', 'name');
+    }
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id', 'cityid')
+                    ->select('cityid', 'name');
     }
 
 }

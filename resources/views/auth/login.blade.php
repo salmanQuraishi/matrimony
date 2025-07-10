@@ -4,7 +4,7 @@
         <h3 class="col-md-12 mb-4">
             <img src="assets/img/kaiadmin/logo_dark.svg" style="width: 100%">
         </h3>
-        <form method="POST" action="{{ route('login') }}">
+        <form method="POST" action="{{ route('login.store') }}">
             @csrf
             <div class="mb-3">
                 <label for="email" class="form-label">Email address</label>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\MethodController;
+use Illuminate\Support\Facades\Validator;
 use App\Models\AnnualIncome;
 use App\Models\Caste;
 use App\Models\CompanyType;
@@ -13,6 +14,8 @@ use App\Models\Education;
 use App\Models\JobType;
 use App\Models\Occupation;
 use App\Models\Religion;
+use App\Models\State;
+use App\Models\City;
 
 class CommonController extends Controller
 {
@@ -31,16 +34,15 @@ class CommonController extends Controller
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }
     }
-    public function getCaste(Request $request)
+    public function getCaste($religion)
     {
         try {
-            $request->validate([
-                'religionid' => ['required', 'integer', 'exists:religions,id'],
-            ]);
+            $validator = Validator::make(
+                ['religionId' => $religion],
+                ['religionId' => ['required', 'integer', 'exists:religions,rid']]
+            );;
 
-            $religionId = $request->religionid;
-
-            $Caste = Caste::where('religionid', $religionId)
+            $Caste = Caste::where('religionid', $religion)
                         ->where('status', 'show')
                         ->get(['cid', 'name', 'description']);
 
@@ -142,6 +144,45 @@ class CommonController extends Controller
 
             return MethodController::successResponse('Company Type Data', $CompanyType);
 
+        } catch (\Exception $e) {
+            return MethodController::errorResponse('An unexpected error occurred.', 500);
+        }
+    }
+    public function getState()
+    {
+        try {
+            $State = State::where('status', 'Active')->get(['sid','name']);
+
+            if ($State->isEmpty()) {
+                return MethodController::errorResponse('State Data not found', 404);
+            }
+
+            return MethodController::successResponse('State Data', $State);
+
+        } catch (\Exception $e) {
+            return MethodController::errorResponse('An unexpected error occurred.', 500);
+        }
+    }
+    public function getCity($state)
+    {
+        try {
+            $validator = Validator::make(
+                ['state' => $state],
+                ['state' => ['required', 'integer', 'exists:state,sid']]
+            );;
+
+            $Caste = City::where('state_id', $state)
+                        ->where('status', 'Active')
+                        ->get(['cityid', 'name']);
+
+            if ($Caste->isEmpty()) {
+                return MethodController::errorResponse('Caste Data not found', 404);
+            }
+
+            return MethodController::successResponse('Caste Data', $Caste);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return MethodController::errorResponse($e->errors(), 422);
         } catch (\Exception $e) {
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }
