@@ -29,6 +29,7 @@ class User extends Authenticatable
         'caste_id',
         'education_id',
         'profile_for',
+        'profile',
         'name',
         'email',
         'mobile',
@@ -103,6 +104,16 @@ class User extends Authenticatable
     {
         return $this->belongsTo(City::class, 'city_id', 'cityid')
                     ->select('cityid', 'name');
+    }
+    // Users this user has liked
+    public function likes()
+    {
+        return $this->belongsToMany(User::class, 'user_likes', 'liker_id', 'liked_id');
+    }
+    // Users who have liked this user
+    public function likedBy()
+    {
+        return $this->belongsToMany(User::class, 'user_likes', 'liked_id', 'liker_id');
     }
 
 }

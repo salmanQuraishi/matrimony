@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('height')->default(0);
             $table->string('weight')->default(0);
             $table->string('myself')->nullable();
-            $table->json('images')->nullable();
+            $table->string('profile')->nullable();
             $table->enum('gender', ['male', 'female', 'others'])->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');

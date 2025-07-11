@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommonController;
+use App\Http\Controllers\Api\LikedController;
 use App\Http\Controllers\Api\MatchController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -37,6 +38,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/change-password', [AuthController::class, 'changePassword']);
     Route::get('/get-user', [AuthController::class, 'getUser']);
     
-    Route::get('/matches', [MatchController::class, 'getRelevantUsers']);
+    Route::get('/get/matches', [MatchController::class, 'getRelevantUsers']);
+    Route::get('/get/matches/details/{user}', [MatchController::class, 'getRelevantUserDetails']);
+
+    Route::post('/update/like-user', [LikedController::class, 'likeUser']);
 
 });

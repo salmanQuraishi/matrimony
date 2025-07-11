@@ -303,16 +303,26 @@ class AuthController extends Controller
 
             $validated = $request->validate([
                 'myself' => 'required|string|min:20|max:100',
-                'images' => 'required',
+                'images' => 'nullable',
                 'images.*' => 'image|mimes:jpg,jpeg,png,webp,svg|max:2048',
             ]);
 
             $user = $request->user();
+
+            $profile = $user->profile;
+
             $user->myself = $validated['myself'];
             if($request->images){
+
+                if (!empty($profile) && file_exists(public_path($profile))) {
+                    unlink(public_path($profile));
+                }
+
                 $img = "profile/".rand(99999,9999999).time().'.'.$request->images->extension(); 
                 $request->images->move(public_path('profile/'), $img);
-                $user->images = json_encode($img);
+                $user->profile = $img;
+            }else{
+                $user->profile = $profile;
             }
             $user->save();
 
