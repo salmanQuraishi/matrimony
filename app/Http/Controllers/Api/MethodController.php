@@ -34,13 +34,14 @@ class MethodController extends Controller
                 'caste' => $user->caste ?? null,
                 'state' => $user->state ?? null,
                 'city' => $user->city ?? null,
+                'galleries' => $user->galleries ?? null,
             ];
         })->values();
     }
 
     public static function formatUserResponse($user)
     {
-        $user = User::with('profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste','state','city')->where('id', $user)->first();
+        $user = User::with('profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste','state','city','galleries')->where('id', $user)->first();
         
         return [
             'dummyid' => $user->dummyid ?? null,
@@ -64,6 +65,7 @@ class MethodController extends Controller
             'caste' => $user->caste ?? null,
             'state' => $user->state ?? null,
             'city' => $user->city ?? null,
+            'galleries' => $user->galleries ?? null,
         ];
     }
     public static function generateUniqueDummyId($prefix = 'WEB', $length = 6)

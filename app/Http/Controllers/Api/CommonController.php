@@ -16,6 +16,7 @@ use App\Models\Occupation;
 use App\Models\Religion;
 use App\Models\State;
 use App\Models\City;
+use App\Models\Gallery;
 
 class CommonController extends Controller
 {

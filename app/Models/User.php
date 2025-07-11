@@ -115,5 +115,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'user_likes', 'liked_id', 'liker_id');
     }
+    public function galleries()
+    {
+        return $this->hasMany(Gallery::class, 'user_id')
+                    ->select('gid', 'user_id', 'image_path');
+    }
 
 }

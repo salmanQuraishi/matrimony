@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Api\MethodController;
+use App\Models\Gallery;
 
 class AuthController extends Controller
 {
@@ -233,12 +234,16 @@ class AuthController extends Controller
             $request->validate([
                 'height' => ['required', 'numeric', 'min:0'],
                 'weight' => ['required', 'numeric', 'min:0'],
+                'state' => ['required','integer','exists:state,sid'],                
+                'city' => ['required','integer','exists:city,cityid'],
             ]);
 
             $user = $request->user();
 
             $user->height = $request->height;
             $user->weight = $request->weight;
+            $user->state_id = $request->state;
+            $user->city_id = $request->city;
             $user->save();
 
             return response()->json([
@@ -329,6 +334,51 @@ class AuthController extends Controller
             return response()->json([
                 'status'  => true,
                 'message' => 'Profile details updated successfully.',
+            ], 200);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'status' => false,
+                'errors' => $e->errors(),
+            ], 422);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'error'  => 'An unexpected error occurred.',
+            ], 500);
+        }
+    }
+    public function updateGallery(Request $request)
+    {
+        try {
+            $request->headers->set('Accept', 'application/json');
+
+            $validated = $request->validate([
+                'images' => 'nullable',
+                'images.*' => 'image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            ]);
+
+            $userId = $request->user()->id;
+
+            // print_r($request->images);
+            // return;
+
+            if (!empty($request->images)) {
+                foreach ($request->images as $image) {
+                    $imgName = "profile/" . rand(99999, 9999999) . time() . '.' . $image->extension(); 
+                    $image->move(public_path('profile/'), $imgName);
+
+                    Gallery::create([
+                        'user_id'    => $userId,
+                        'image_path' => $imgName,
+                    ]);
+                }
+            }
+
+            return response()->json([
+                'status'  => true,
+                'message' => 'Gallery updated successfully.',
             ], 200);
 
         } catch (ValidationException $e) {
