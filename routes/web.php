@@ -10,10 +10,18 @@ use App\Http\Controllers\OccupationController;
 use App\Http\Controllers\AnnualIncomeController;
 use App\Http\Controllers\CompanyTypeController;
 use App\Http\Controllers\JobTypeController;
+use App\Http\Controllers\UserController;
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    // user
+    Route::get('/user', [UserController::class, 'index'])->name('user.index');
+    Route::get('/user/create', [UserController::class, 'create'])->name('user.create');
+    Route::post('/user/store', [UserController::class, 'store'])->name('user.store');
+    Route::get('/user/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/user/update/{id}', [UserController::class, 'update'])->name('user.update');
 
     // religion
     Route::get('/religion', [ReligionController::class, 'index'])->name('religion.index');

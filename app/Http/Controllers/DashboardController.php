@@ -10,11 +10,14 @@ use App\Models\ProfileType;
 use App\Models\AnnualIncome;
 use App\Models\CompanyType;
 use App\Models\JobType;
+use App\Models\User;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $totalUser = User::count();
+
         $totalReligion = Religion::count();
 
         $totalCaste = Caste::count();
@@ -31,7 +34,7 @@ class DashboardController extends Controller
 
         $TotalCompanyType = CompanyType::count();
 
-        $data = compact('totalReligion', 'totalCaste','totalProfileType','totalEducation','totalOccupation','TotalAnnualIncome','TotalJobType','TotalCompanyType');
+        $data = compact('totalUser','totalReligion', 'totalCaste','totalProfileType','totalEducation','totalOccupation','TotalAnnualIncome','TotalJobType','TotalCompanyType');
         
         return view('dashboard', $data);
     }

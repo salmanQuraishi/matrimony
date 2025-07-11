@@ -35,6 +35,12 @@
                 </a>
               </li>
               <li class="nav-item">
+                <a href="{{route('user.index')}}">
+                  <i class="fas fas fa-users"></i>
+                  <p>User</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a data-bs-toggle="collapse" href="#Additional">
                   <i class="fas fa-layer-group"></i>
                   <p>Additional Info</p>
