@@ -16,8 +16,14 @@ class UserController extends Controller
 
     public function edit($id)
     {
-        $religion = User::findOrFail($id);
+        $user = User::findOrFail($id);
         return view('user.edit', compact('user'));
+    }
+
+    public function view($id)
+    {
+        $user = User::findOrFail($id);
+        return view('user.view', compact('user'));
     }
     
 }

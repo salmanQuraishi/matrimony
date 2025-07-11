@@ -35,12 +35,12 @@
                         <td>{{$data->caste->name ?? null}}</td>
                         <td>{{ $data->created_at->format('Y-m-d') }}</td>
                         <td>
-                          <butto href="{{route('user.edit',$data->id)}}" class="btn btn-info btn-sm">
+                          <a href="{{route('user.view',$data->id)}}" class="btn btn-info btn-sm">
                             <span class="btn-label">
                               <i class="fa fa-eye"></i>
                             </span>
                             View
-                          </butto>
+                          </a>
                           <a href="{{route('user.edit',$data->id)}}" class="btn btn-primary btn-sm">
                             <span class="btn-label">
                               <i class="fa fa-edit"></i>
