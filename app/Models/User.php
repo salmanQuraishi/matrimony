@@ -120,5 +120,19 @@ class User extends Authenticatable
         return $this->hasMany(Gallery::class, 'user_id')
                     ->select('gid', 'user_id', 'image_path');
     }
+    public function sentInterests()
+    {
+        return $this->hasMany(Interest::class, 'sender_id');
+    }
+
+    public function receivedInterests()
+    {
+        return $this->hasMany(Interest::class, 'receiver_id');
+    }
+    public function chats()
+    {
+        return $this->belongsToMany(User::class, 'chats', 'user_id', 'contact_id')
+                    ->withTimestamps();
+    }
 
 }

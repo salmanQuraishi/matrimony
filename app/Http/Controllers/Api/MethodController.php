@@ -86,6 +86,13 @@ class MethodController extends Controller
             'data' => $data,
         ], 200);
     }
+    public static function successResponseSimple($message)
+    {
+        return response()->json([
+            'status' => true,
+            'message' => $message
+        ], 200);
+    }
 
     public static function errorResponse($message = 'Something went wrong', $status = 404)
     {

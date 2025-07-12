@@ -4,8 +4,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommonController;
+use App\Http\Controllers\Api\InterestController;
 use App\Http\Controllers\Api\LikedController;
 use App\Http\Controllers\Api\MatchController;
+use App\Http\Controllers\Api\ChatController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -43,5 +45,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get/matches/details/{user}', [MatchController::class, 'getRelevantUserDetails']);
 
     Route::post('/update/like-user', [LikedController::class, 'likeUser']);
+
+    Route::post('/interests/send/{receiver}', [InterestController::class, 'sendInterest']);
+    Route::post('/interests/accept/{interest}', [InterestController::class, 'acceptInterest']);
+    Route::post('/interests/reject/{interest}', [InterestController::class, 'rejectInterest']);
+    Route::get('/interests/sent', [InterestController::class, 'sent']);
+    Route::get('/interests/received', [InterestController::class, 'received']);
+
+    Route::get('/get-chats', [ChatController::class,'chatList']);
 
 });
