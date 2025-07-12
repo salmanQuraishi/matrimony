@@ -13,6 +13,7 @@ class MethodController extends Controller
             return [
                 'likes' => $user->likes()->count(),
                 'is_liked' => $user->is_liked ?? 0,
+                'id' => $user->id,
                 'dummyid' => $user->dummyid ?? null,
                 'name' => $user->name ?? null,
                 'email' => $user->email ?? null,
@@ -44,6 +45,7 @@ class MethodController extends Controller
         $user = User::with('profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste','state','city','galleries')->where('id', $user)->first();
         
         return [
+            'id' => $user->id,
             'dummyid' => $user->dummyid ?? null,
             'name' => $user->name ?? null,
             'email' => $user->email ?? null,

@@ -20,6 +20,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::middleware('auth')->group(function () {
 
+    Route::get('/get/caste/list/{religion}', [UserController::class, 'getCaste'])->name('user.caste');
+    Route::get('/get/city/list/{state}', [UserController::class, 'getCity'])->name('user.city');
+
     // user
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
     Route::get('/user/view/{id}', [UserController::class, 'view'])->name('user.view');

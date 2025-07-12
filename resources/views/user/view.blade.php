@@ -15,6 +15,94 @@
               <div class="card-body">
                 <div class="row">
                   <div class="col-md-4">
+                    <x-user-select 
+                      label="States" 
+                      id="StateSelect" 
+                      name="state_id" 
+                      :options="$States"
+                      :selected="old('state_id',$user->state_id)" 
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="citySelect">City</label>
+                      <select id="citySelect" name="city_id" class="form-select form-control">
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <x-user-select 
+                      label="Job Type" 
+                      id="JobTypeSelect" 
+                      name="job_type_id" 
+                      :options="$JobType"
+                      :selected="old('job_type_id',$user->job_type_id)" 
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <x-user-select 
+                      label="Education" 
+                      id="EducationeSelect" 
+                      name="education_id" 
+                      :options="$Education"
+                      :selected="old('education_id',$user->education_id)" 
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <x-user-select 
+                      label="Occupation" 
+                      id="OccupationSelect" 
+                      name="occupation_id" 
+                      :options="$Occupation"
+                      :selected="old('occupation_id',$user->occupation_id)" 
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <x-user-select 
+                      label="Annual Income" 
+                      id="AnnualIncomeSelect" 
+                      name="annual_income_id" 
+                      :options="$AnnualIncome"
+                      :selected="old('annual_income_id',$user->annual_income_id)" 
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <x-user-select 
+                      label="Company Type" 
+                      id="CompanyTypeSelect" 
+                      name="company_type_id" 
+                      :options="$CompanyType"
+                      :selected="old('company_type_id',$user->company_type_id)" 
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <x-user-select 
+                      label="Profile For" 
+                      id="profileforSelect" 
+                      name="profile_for" 
+                      :options="$ProfileTypes"
+                      :selected="old('profile_for',$user->profile_for)" 
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <x-user-select 
+                      label="Religion" 
+                      id="religionSelect" 
+                      name="religion_id" 
+                      :options="$religions"
+                      :selected="old('religion_id',$user->religion_id)" 
+                    />
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label for="casteSelect">Caste</label>
+                      <select id="casteSelect" name="caste_id" class="form-select form-control">
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
                     <x-form-input
                       type="text"
                       id="nameInput"
@@ -124,12 +212,12 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-12">
                     <x-form-textarea
                       id="myself"
                       name="myself"
                       label="About Myself"
-                      rows="4"
+                      rows="3"
                       placeholder="Enter About Myself"
                       :value="old('myself', $user->myself)"
                     />
@@ -147,3 +235,109 @@
     </div>
   </div>
 </x-app-layout>
+<script>
+  $(document).ready(function() {
+
+    $("#StateSelect").change(function() {
+      let state = $(this).val();
+      let url = "{{ route('user.city', ':state') }}".replace(':state', state);
+
+      if (state) {
+        $.ajax({
+          url: url,
+          type: 'GET',
+          success: function(response) {
+            let citySelect = $("#citySelect");
+            citySelect.empty();
+            citySelect.append('<option value="">Select City</option>');
+
+            $.each(response.cities, function(key, value) {
+              citySelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+            });
+          },
+          error: function(xhr) {
+            console.error('Error fetching cities:', xhr);
+          }
+        });
+      }
+    });
+
+    function loadCity() {
+      let state = $("#StateSelect").val();
+      let city = {{ $user->city_id ?? 'null' }};
+      let url = "{{ route('user.city', ':state') }}".replace(':state', state);
+
+      if (state) {
+        $.ajax({
+          url: url,
+          type: 'GET',
+          success: function(response) {
+            let citySelect = $("#citySelect");
+            citySelect.empty();
+            citySelect.append('<option value="">Select City</option>');
+
+            $.each(response.cities, function(key, value) {
+              let selected = (value.id == city) ? 'selected' : '';
+              citySelect.append('<option value="' + value.id + '" ' + selected + '>' + value.name + '</option>');
+            });
+          },
+          error: function(xhr) {
+            console.error('Error fetching cities:', xhr);
+          }
+        });
+      }
+    }
+    loadCity();
+
+    $("#religionSelect").change(function() {
+      let religion = $(this).val();
+
+      let url = "{{ route('user.caste', ':religion') }}".replace(':religion', religion);
+
+      if (religion) {
+        $.ajax({
+          url: url,
+          type: 'GET',
+          success: function(response) {
+            let casteSelect = $("#casteSelect");
+            casteSelect.empty();
+
+            $.each(response.castes, function(key, value) {
+              casteSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+            });
+          },
+          error: function(xhr) {
+            console.error('Error fetching castes:', xhr);
+          }
+        });
+      }
+    });
+
+    function loadCaste() {
+      let religion = $("#religionSelect").val();
+      let caste = {{$user->caste_id}};
+      let url = "{{ route('user.caste', ':religion') }}".replace(':religion', religion);
+
+      if (religion) {
+        $.ajax({
+          url: url,
+          type: 'GET',
+          success: function(response) {
+            let casteSelect = $("#casteSelect");
+            casteSelect.empty();
+
+            $.each(response.castes, function(key, value) {
+              let selected = (value.id == caste) ? 'selected' : '';
+              casteSelect.append('<option value="' + value.id + '" ' + selected + '>' + value.name + '</option>');
+            });
+          },
+          error: function(xhr) {
+            console.error('Error fetching castes:', xhr);
+          }
+        });
+      }
+    }
+    loadCaste();
+
+  });
+</script>
