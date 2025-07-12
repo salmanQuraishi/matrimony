@@ -12,6 +12,10 @@ use App\Http\Controllers\CompanyTypeController;
 use App\Http\Controllers\JobTypeController;
 use App\Http\Controllers\UserController;
 
+Route::fallback(function () {
+    return view('error.404');
+});
+
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
