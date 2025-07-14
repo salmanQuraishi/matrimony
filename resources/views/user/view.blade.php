@@ -1,108 +1,34 @@
 <x-app-layout>
+  
+@php
+  $readonly = Route::is('user.view') ? 'readonly' : null;
+  $disabled = Route::is('user.view') ? 'disabled' : null;
+
+  $formCondition = Route::is('user.view') ? false : true;
+  $page = Route::is('user.view') ? "View User" : "Edit User";
+@endphp
+
   <div class="container">
     <div class="page-inner">
       <div class="row">
         <div class="col-md-12">
           <div class="card">
             <div class="card-header">
-              <div class="card-title">View User</div>
+              <div class="card-title">{{$page}}</div>
             </div>
 
-            <form action="{{ route('user.edit', $user->id) }}" method="post">
+            @if($formCondition === true)
+            
+            <form action="{{ route('user.update', $user->id) }}" method="post">
               @csrf
               @method('PUT')
+            
+              @endif
 
               <div class="card-body">
+                <h6><b>Profile Details</b></h6>
                 <div class="row">
-                  <div class="col-md-4">
-                    <x-user-select 
-                      label="States" 
-                      id="StateSelect" 
-                      name="state_id" 
-                      :options="$States"
-                      :selected="old('state_id',$user->state_id)" 
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="citySelect">City</label>
-                      <select id="citySelect" name="city_id" class="form-select form-control">
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-md-4">
-                    <x-user-select 
-                      label="Job Type" 
-                      id="JobTypeSelect" 
-                      name="job_type_id" 
-                      :options="$JobType"
-                      :selected="old('job_type_id',$user->job_type_id)" 
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <x-user-select 
-                      label="Education" 
-                      id="EducationeSelect" 
-                      name="education_id" 
-                      :options="$Education"
-                      :selected="old('education_id',$user->education_id)" 
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <x-user-select 
-                      label="Occupation" 
-                      id="OccupationSelect" 
-                      name="occupation_id" 
-                      :options="$Occupation"
-                      :selected="old('occupation_id',$user->occupation_id)" 
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <x-user-select 
-                      label="Annual Income" 
-                      id="AnnualIncomeSelect" 
-                      name="annual_income_id" 
-                      :options="$AnnualIncome"
-                      :selected="old('annual_income_id',$user->annual_income_id)" 
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <x-user-select 
-                      label="Company Type" 
-                      id="CompanyTypeSelect" 
-                      name="company_type_id" 
-                      :options="$CompanyType"
-                      :selected="old('company_type_id',$user->company_type_id)" 
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <x-user-select 
-                      label="Profile For" 
-                      id="profileforSelect" 
-                      name="profile_for" 
-                      :options="$ProfileTypes"
-                      :selected="old('profile_for',$user->profile_for)" 
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <x-user-select 
-                      label="Religion" 
-                      id="religionSelect" 
-                      name="religion_id" 
-                      :options="$religions"
-                      :selected="old('religion_id',$user->religion_id)" 
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label for="casteSelect">Caste</label>
-                      <select id="casteSelect" name="caste_id" class="form-select form-control">
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-4">
+                  <div class="col-md-3">
                     <x-form-input
                       type="text"
                       id="nameInput"
@@ -110,9 +36,21 @@
                       name="dummyid"
                       :value="old('dummyid', $user->dummyid)"
                       placeholder="Enter Dummy Id"
+                      readonly
+                      disabled
                     />
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-3">
+                    <x-user-select 
+                      label="Profile For" 
+                      id="profileforSelect" 
+                      name="profile_for" 
+                      :options="$ProfileTypes"
+                      :selected="old('profile_for',$user->profile_for)"
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
                     <x-form-input
                       type="text"
                       id="nameInput"
@@ -120,19 +58,11 @@
                       name="name"
                       :value="old('name', $user->name)"
                       placeholder="Enter User Name"
+                      :readonly="$readonly"
+                      :disabled="$disabled"
                     />
                   </div>
-                  <div class="col-md-4">
-                    <x-form-input
-                      type="text"
-                      id="nameInput"
-                      label="User Email"
-                      name="email"
-                      :value="old('email', $user->email)"
-                      placeholder="Enter User Email"
-                    />
-                  </div>
-                  <div class="col-md-4">
+                  <div class="col-md-3">
                     <x-form-input
                       type="number"
                       id="nameInput"
@@ -140,77 +70,9 @@
                       name="mobile"
                       :value="old('mobile', $user->mobile)"
                       placeholder="Enter User Mobile"
+                      :readonly="$readonly"
+                      :disabled="$disabled"
                     />
-                  </div>
-                  <div class="col-md-4">
-                    <x-form-input
-                      type="text"
-                      id="nameInput"
-                      label="User Age"
-                      name="age"
-                      :value="old('age', $user->age)"
-                      placeholder="Enter User Age"
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <x-form-input
-                    type="date"
-                    id="nameInput"
-                    label="User DOB"
-                    name="dob"
-                    :value="old('dob', $user->dob)"
-                    placeholder="Enter User DOB"
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <x-form-input
-                      type="text"
-                      id="nameInput"
-                      label="User Height"
-                      name="height"
-                      :value="old('height', $user->height)"
-                      placeholder="Enter User Height"
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <x-form-input
-                      type="text"
-                      id="nameInput"
-                      label="User Weight"
-                      name="weight"
-                      :value="old('weight', $user->weight)"
-                      placeholder="Enter User Weight"
-                    />
-                  </div>
-                  <div class="col-md-4">
-                    <div class="form-group">
-                      <label>Gender</label><br>
-                      <div class="d-flex">
-                        <div class="form-check me-3">
-                          <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male"
-                            {{ $user->gender == 'male' ? 'checked' : '' }}>
-                          <label class="form-check-label" for="genderMale">
-                            Male
-                          </label>
-                        </div>
-
-                        <div class="form-check me-3">
-                          <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female"
-                            {{ $user->gender == 'female' ? 'checked' : '' }}>
-                          <label class="form-check-label" for="genderFemale">
-                            Female
-                          </label>
-                        </div>
-
-                        <div class="form-check">
-                          <input class="form-check-input" type="radio" name="gender" id="genderOther" value="other"
-                            {{ $user->gender == 'other' ? 'checked' : '' }}>
-                          <label class="form-check-label" for="genderOther">
-                            Other
-                          </label>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                   <div class="col-md-12">
                     <x-form-textarea
@@ -220,14 +82,182 @@
                       rows="3"
                       placeholder="Enter About Myself"
                       :value="old('myself', $user->myself)"
+                      :readonly="$readonly"
+                      :disabled="$disabled"
+                    />
+                  </div>
+                </div>
+                <h6><b>Basic Details</b></h6>
+                <div class="row">
+                  <div class="col-md-3">
+                    <x-form-input
+                      type="text"
+                      id="nameInput"
+                      label="User Age"
+                      name="age"
+                      :value="old('age', $user->age)"
+                      placeholder="Enter User Age"
+                      :readonly="$readonly"
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <x-form-input
+                    type="date"
+                    id="nameInput"
+                    label="User DOB"
+                    name="dob"
+                    :value="old('dob', $user->dob)"
+                    placeholder="Enter User DOB"
+                    :readonly="$readonly"
+                    :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <x-form-input
+                      type="text"
+                      id="nameInput"
+                      label="User Email"
+                      name="email"
+                      :value="old('email', $user->email)"
+                      placeholder="Enter User Email"
+                      :readonly="$readonly"
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <x-form-radio-group
+                      label="Gender"
+                      name="gender"
+                      :options="['male' => 'Male', 'female' => 'Female', 'other' => 'Other']"
+                      :selected="old('gender', $user->gender)"
+                      :disabled="$disabled"
+                    />
+                  </div>
+                </div>
+                <h6><b>Religion Details</b></h6>
+                <div class="row">
+                  <div class="col-md-3">
+                    <x-user-select 
+                      label="Religion" 
+                      id="religionSelect" 
+                      name="religion_id" 
+                      :options="$religions"
+                      :selected="old('religion_id',$user->religion_id)" 
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="casteSelect">Caste</label>
+                      <select id="casteSelect" name="caste_id" class="form-select form-control" {{$disabled}}>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <h6><b>Personal Details</b></h6>
+                <div class="row">
+                  <div class="col-md-3">
+                    <x-form-input
+                      type="text"
+                      id="nameInput"
+                      label="User Height"
+                      name="height"
+                      :value="old('height', $user->height)"
+                      placeholder="Enter User Height"
+                      :readonly="$readonly"
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <x-form-input
+                      type="text"
+                      id="nameInput"
+                      label="User Weight"
+                      name="weight"
+                      :value="old('weight', $user->weight)"
+                      placeholder="Enter User Weight"
+                      :readonly="$readonly"
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <x-user-select 
+                      label="States" 
+                      id="StateSelect" 
+                      name="state_id" 
+                      :options="$States"
+                      :selected="old('state_id',$user->state_id)"
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="citySelect">City</label>
+                      <select id="citySelect" name="city_id" class="form-select form-control" {{$disabled}}>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <h6><b>Perfessional Details</b></h6>
+                <div class="row">
+                  <div class="col-md-3">
+                    <x-user-select 
+                      label="Education" 
+                      id="EducationeSelect" 
+                      name="education_id" 
+                      :options="$Education"
+                      :selected="old('education_id',$user->education_id)" 
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <x-user-select 
+                      label="Job Type" 
+                      id="JobTypeSelect" 
+                      name="job_type_id" 
+                      :options="$JobType"
+                      :selected="old('job_type_id',$user->job_type_id)" 
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <x-user-select 
+                      label="Company Type" 
+                      id="CompanyTypeSelect" 
+                      name="company_type_id" 
+                      :options="$CompanyType"
+                      :selected="old('company_type_id',$user->company_type_id)" 
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <x-user-select 
+                      label="Occupation" 
+                      id="OccupationSelect" 
+                      name="occupation_id" 
+                      :options="$Occupation"
+                      :selected="old('occupation_id',$user->occupation_id)" 
+                      :disabled="$disabled"
+                    />
+                  </div>
+                  <div class="col-md-3">
+                    <x-user-select 
+                      label="Annual Income" 
+                      id="AnnualIncomeSelect" 
+                      name="annual_income_id" 
+                      :options="$AnnualIncome"
+                      :selected="old('annual_income_id',$user->annual_income_id)" 
+                      :disabled="$disabled"
                     />
                   </div>
                 </div>
               </div>
-
+              @if($formCondition === true)
               <div class="card-action">
                 <button class="btn btn-success" type="submit">Update</button>
               </div>
+              @endif
             </form>
           </div>
         </div>

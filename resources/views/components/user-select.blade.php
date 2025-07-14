@@ -3,9 +3,16 @@
 @endphp
 
 <div class="form-group @error($name) has-error has-feedback @enderror">
-    <label for="{{ $id }}">{{ $label }}</label>
-    <select class="form-select form-control" id="{{ $id }}" name="{{ $name }}">
-        <option value="{{ $label }}">{{ $label }}</option>
+    @if($label)
+        <label for="{{ $id }}">{{ $label }}</label>
+    @endif
+
+    <select
+        id="{{ $id }}"
+        name="{{ $name }}"
+        {{ $attributes->merge(['class' => 'form-select form-control' . ($errors->has($name) ? ' is-invalid' : '')]) }}
+    >
+        <option value="" selected disabled>{{ $label }}</option>
         @foreach($options as $option)
             @php
                 $optionValue = is_object($option) ? $option->id : $option;
@@ -16,6 +23,7 @@
             </option>
         @endforeach
     </select>
+
     @error($name)
         <div class="invalid-feedback">{{ $message }}</div>
     @enderror

@@ -198,8 +198,6 @@
                       </li>
                       <li>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Account Setting</a>
-                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#" onclick="event.preventDefault(); confirmLogout();">Logout</a>
                       </li>
                     </div>

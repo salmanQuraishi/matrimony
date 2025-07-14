@@ -21,17 +21,10 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with('religion','caste')->where('id','!=',1)->get();
-        // dd($users);
         return view('user.index',compact('users'));
     }
 
     public function edit($id)
-    {
-        $user = User::findOrFail($id);
-        return view('user.edit', compact('user'));
-    }
-
-    public function view($id)
     {
         $religions = Religion::where('status','show')
                     ->select('rid as id', 'name')
@@ -67,6 +60,58 @@ class UserController extends Controller
 
         $user = User::findOrFail($id);
         return view('user.view', compact('user','religions','States','ProfileTypes','CompanyType','JobType','AnnualIncome','Occupation','Education'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'profile_for'      => 'required',
+            'name'             => 'required|string|max:255',
+            'mobile'           => 'required|digits_between:10,15',
+            'myself'           => 'nullable|string',
+            'age'              => 'required|numeric|min:1|max:100',
+            'dob'              => 'required|date',
+            'email'            => 'required|email|max:255',
+            'gender'           => 'required|in:male,female,other',
+            'religion_id'      => 'required|exists:religions,rid',
+            'caste_id'         => 'nullable|exists:castes,cid',
+            'height'           => 'nullable|string',
+            'weight'           => 'nullable|string',
+            'state_id'         => 'required|exists:state,sid',
+            'city_id'          => 'required|exists:city,cityid',
+            'education_id'     => 'required|exists:educations,eid',
+            'job_type_id'      => 'nullable|exists:job_types,jtid',
+            'company_type_id'  => 'nullable|exists:company_types,ctid',
+            'occupation_id'    => 'nullable|exists:occupations,oid',
+            'annual_income_id' => 'nullable|exists:annual_incomes,aid',
+        ]);
+
+        // Now assign fields manually
+        $user->profile_for       = $request->input('profile_for');
+        $user->name              = trim($request->input('name'));
+        $user->mobile            = $request->input('mobile');
+        $user->myself            = $request->input('myself');
+        $user->age               = $request->input('age');
+        $user->dob               = date('Y-m-d', strtotime($request->input('dob')));
+        $user->email             = strtolower($request->input('email'));
+        $user->gender            = $request->input('gender');
+        $user->religion_id       = $request->input('religion_id');
+        $user->caste_id          = $request->input('caste_id');
+        $user->height            = $request->input('height');
+        $user->weight            = $request->input('weight');
+        $user->state_id          = $request->input('state_id');
+        $user->city_id           = $request->input('city_id');
+        $user->education_id      = $request->input('education_id');
+        $user->job_type_id       = $request->input('job_type_id');
+        $user->company_type_id   = $request->input('company_type_id');
+        $user->occupation_id     = $request->input('occupation_id');
+        $user->annual_income_id  = $request->input('annual_income_id');
+
+        $user->save();
+
+        return redirect()->route('user.edit', $user->id)->with('success', 'User updated successfully.');
     }
 
     public function getCaste($religion)

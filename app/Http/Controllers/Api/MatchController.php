@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\MethodController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class MatchController extends Controller
@@ -15,11 +16,20 @@ class MatchController extends Controller
     {
         $user = Auth::user();
 
+        $sentInterestUserIds = DB::table('interests')
+        ->where('sender_id', $user->id)
+        ->whereIn('status', ['pending', 'accepted'])
+        ->pluck('receiver_id')
+        ->toArray();
+
         // Get IDs of users the authenticated user has liked
         $likedUserIds = $user->likes()->pluck('users.id')->toArray();
 
         // Fetch matched users with filters
         $matches = User::where('id', '!=', $user->id)
+        
+            ->whereNotIn('id', $sentInterestUserIds)
+
             ->when(!is_null($user->gender), function ($query) use ($user) {
                 return $query->where('gender', '!=', $user->gender);
             })
