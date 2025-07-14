@@ -51,11 +51,11 @@
 
         <div class="copyright">
           2025, made with <i class="fa fa-heart heart text-danger"></i> by
-          <a href="Webtis.in">Salman Quraishi</a>
+          <a href="javascript:void(0)">Salman Quraishi</a>
         </div>
         <div>
           Distributed by
-          <a target="_blank" href="Webtis.in">Webtis.in</a>
+          <a target="_blank" href="https://webtis.in">Webtis.in</a>
         </div>
       </div>
     </footer>

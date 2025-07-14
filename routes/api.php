@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\InterestController;
 use App\Http\Controllers\Api\LikedController;
 use App\Http\Controllers\Api\MatchController;
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\MessageController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -52,6 +53,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/interests/sent', [InterestController::class, 'sent']);
     Route::get('/interests/received', [InterestController::class, 'received']);
 
-    Route::get('/get-chats', [ChatController::class,'chatList']);
+    Route::get('/user/chat/list', [MessageController::class, 'chatList']);
+    Route::get('/user/messages', [MessageController::class, 'usermessages']);
+    Route::post('/user/messages', [MessageController::class, 'store']);
+    Route::patch('/user/messages/{id}/read', [MessageController::class, 'markAsRead']);
 
 });
