@@ -11,7 +11,7 @@ class MethodController extends Controller
     {
         return $users->map(function ($user) {
             return [
-                'likes' => $user->likes()->count(),
+                'likes' => $user->likedBy()->count(),
                 'is_liked' => $user->is_liked ?? 0,
                 'id' => $user->id,
                 'dummyid' => $user->dummyid ?? null,
