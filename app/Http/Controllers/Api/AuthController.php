@@ -21,6 +21,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'fcm_token' => 'required',
             'profile_for' => 'required|exists:profile_types,ptid',
             'name' => 'required|string|max:255',
             'mobile' => 'required|string|regex:/^[0-9]{10,15}$/|unique:users,mobile',
@@ -37,6 +38,7 @@ class AuthController extends Controller
 
         try {
             $user = User::create([
+                'fcm_token' => $request->fcm_token,
                 'dummyid' => MethodController::generateUniqueDummyId('WEB', 6),
                 'profile_for' => $request->profile_for,
                 'name' => $request->name,
@@ -69,6 +71,7 @@ class AuthController extends Controller
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
+            'fcm_token' => 'required',
             'mobile' => 'required|digits_between:10,15',
             'password' => 'required|string|min:6',
         ]);
@@ -111,6 +114,9 @@ class AuthController extends Controller
         RateLimiter::clear($throttleKey);
 
         $token = $user->createToken('api_token', ['*'])->plainTextToken;
+
+        $user->fcm_token = $request->fcm_token;
+        $user->save();
 
         return response()->json([
             'status' => true,

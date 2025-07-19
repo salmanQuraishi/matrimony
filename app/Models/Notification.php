@@ -11,7 +11,7 @@ class Notification extends Model
 
     protected $table = 'tbl_notification';
     protected $primaryKey = 'nid';
-    protected $fillable = ['userid', 'title', 'desc', 'image', 'status'];
+    protected $fillable = ['title', 'desc', 'image', 'status'];
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
