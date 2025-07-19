@@ -11,6 +11,7 @@ use App\Http\Controllers\AnnualIncomeController;
 use App\Http\Controllers\CompanyTypeController;
 use App\Http\Controllers\JobTypeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
 
 Route::fallback(function () {
     return view('error.404');
@@ -19,6 +20,13 @@ Route::fallback(function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/send/notification', [NotificationController::class, 'sendNotification'])->name('notification.send');
+    Route::get('/notification/create', [NotificationController::class, 'create'])->name('notification.create');
+    Route::post('/notification/store', [NotificationController::class, 'store'])->name('notification.store');
+    Route::get('/notification/index', [NotificationController::class, 'index'])->name('notification.index');
+    Route::get('/notification/edit/{id}', [NotificationController::class, 'edit'])->name('notification.edit');
+    Route::post('/notification/update/{id}', [NotificationController::class, 'update'])->name('notification.update');
 
     Route::get('/get/caste/list/{religion}', [UserController::class, 'getCaste'])->name('user.caste');
     Route::get('/get/city/list/{state}', [UserController::class, 'getCity'])->name('user.city');

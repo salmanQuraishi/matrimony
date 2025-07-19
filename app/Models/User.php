@@ -124,7 +124,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Interest::class, 'sender_id');
     }
-
     public function receivedInterests()
     {
         return $this->hasMany(Interest::class, 'receiver_id');
@@ -133,10 +132,13 @@ class User extends Authenticatable
     {
         return $this->hasMany(Message::class, 'sender_id');
     }
-
     public function receivedMessages()
     {
         return $this->hasMany(Message::class, 'receiver_id');
+    }
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'user_id');
     }
 
 }

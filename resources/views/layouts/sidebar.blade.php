@@ -92,6 +92,12 @@
                 </div>
               </li>
               <li class="nav-item">
+                <a href="{{route('notification.index')}}">
+                  <i class="fas fas fa-users"></i>
+                  <p>Notification</p>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="#" class="nav-link"
                   onclick="event.preventDefault(); confirmLogout();">
                     <i class="fas fa-sign-out-alt"></i>

@@ -20,5 +20,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AnnualIncomeSeeder::class);
         $this->call(JobTypeSeeder::class);
         $this->call(CompanyTypeSeeder::class);
+        $this->call(TblNotificationSeeder::class);
     }
 }
