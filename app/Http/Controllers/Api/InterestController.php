@@ -6,9 +6,16 @@ use App\Models\User;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\MethodController;
 use App\Models\Interest;
+use App\Services\FirebaseNotificationService;
 
 class InterestController extends Controller
 {
+    protected $firebaseNotificationService;
+
+    public function __construct(FirebaseNotificationService $firebaseNotificationService)
+    {
+        $this->firebaseNotificationService = $firebaseNotificationService;
+    }
     public function sendInterest(User $receiver)
     {
         $sender = auth()->user();
@@ -21,6 +28,13 @@ class InterestController extends Controller
             'sender_id' => $sender->id,
             'receiver_id' => $receiver->id,
         ]);
+
+        $deviceToken = 'fBt02IFnREyjxWQVkfh3VW:APA91bFgW56drB5OoN5RDfNp13bGJPlyQGP7ls4ZY_Ts0WlJZYgcHqU72yklCyoZSOloW6-hT_DMTK8ECjoBjYPfTuLXuKf5bSOejc1Vo9ibZqpgULVjmMM';
+        $title = 'Hello!';
+        $body = 'This is a test notification.';
+        $data = ['key' => 'value']; // optional
+
+        $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body, $data);
 
         return MethodController::successResponseSimple('Interest request sent successfully.');
     }

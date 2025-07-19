@@ -93,7 +93,7 @@
               </li>
               <li class="nav-item">
                 <a href="{{route('notification.index')}}">
-                  <i class="fas fas fa-users"></i>
+                  <i class="fas fas fa-bell"></i>
                   <p>Notification</p>
                 </a>
               </li>

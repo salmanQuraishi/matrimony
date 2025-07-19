@@ -10,6 +10,7 @@ use App\Models\ProfileType;
 use App\Models\AnnualIncome;
 use App\Models\CompanyType;
 use App\Models\JobType;
+use App\Models\Notification;
 use App\Models\User;
 
 class DashboardController extends Controller
@@ -34,7 +35,9 @@ class DashboardController extends Controller
 
         $TotalCompanyType = CompanyType::count();
 
-        $data = compact('totalUser','totalReligion', 'totalCaste','totalProfileType','totalEducation','totalOccupation','TotalAnnualIncome','TotalJobType','TotalCompanyType');
+        $TotalNotification = Notification::count();
+
+        $data = compact('totalUser','totalReligion', 'totalCaste','totalProfileType','totalEducation','totalOccupation','TotalAnnualIncome','TotalJobType','TotalCompanyType','TotalNotification');
         
         return view('dashboard', $data);
     }
