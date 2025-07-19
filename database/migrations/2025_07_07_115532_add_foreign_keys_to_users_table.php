@@ -47,7 +47,7 @@ class AddForeignKeysToUsersTable extends Migration
             $table->foreign('job_type_id')->references('jtid')->on('job_types')->onDelete('set null');
 
             // Company Type
-            $table->unsignedBigInteger('company_type_id')->default(0)->after('id');
+            $table->unsignedBigInteger('company_type_id')->default(null)->after('id');
             $table->foreign('company_type_id')->references('ctid')->on('company_types')->onDelete('set null');
 
         });

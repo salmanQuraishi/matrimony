@@ -47,12 +47,10 @@ class NotificationController extends Controller
         $key = json_decode(file_get_contents($keyFilePath), true);
         $jwt = $this->createJwt($key, $scopes);
 
-        dd($key);
         $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
             'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
             'assertion' => $jwt,
         ]);
-        
 
         if ($response->successful() && isset($response['access_token'])) {
             return $response['access_token'];
@@ -76,8 +74,6 @@ class NotificationController extends Controller
             
             $scopes = $this->getAccessToken($keyFilePath, $scopes);
 
-            dd($scopes);
-
             $data = [
                 "message" => [
                     "topic" => "notification",
@@ -88,12 +84,9 @@ class NotificationController extends Controller
                 ],
             ];
 
-            $response = Http::withToken($accessToken)
+            $response = Http::withToken($scopes)
                 ->withHeaders(['Content-Type' => 'application/json'])
-                ->post('https://fcm.googleapis.com/v1/projects/team-snakalp/messages:send', $data);
-
-
-                dd($response->json());
+                ->post('https://fcm.googleapis.com/v1/projects/matrimonial-webtis/messages:send', $data);
 
             if ($response->successful()) {
                 return redirect()->route('notification.index')
