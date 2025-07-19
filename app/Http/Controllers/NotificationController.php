@@ -3,60 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
+use finfo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Services\FirebaseNotificationService;
 
 class NotificationController extends Controller
 {
-    private function base64UrlEncode($data)
-    {
-        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
-    }
-
-    private function createJwt($key, $scopes)
-    {
-        $now = time();
-        $header = [
-            'alg' => 'RS256',
-            'typ' => 'JWT'
-        ];
-
-        $payload = [
-            'iss' => $key['client_email'],
-            'scope' => implode(' ', $scopes),
-            'aud' => 'https://oauth2.googleapis.com/token',
-            'exp' => $now + 3600,
-            'iat' => $now
-        ];
-
-        $headerEncoded = $this->base64UrlEncode(json_encode($header));
-        $payloadEncoded = $this->base64UrlEncode(json_encode($payload));
-
-        $signatureInput = $headerEncoded . '.' . $payloadEncoded;
-
-        openssl_sign($signatureInput, $signature, $key['private_key'], 'sha256');
-        $signatureEncoded = $this->base64UrlEncode($signature);
-
-        return $signatureInput . '.' . $signatureEncoded;
-    }
-
-    private function getAccessToken($keyFilePath, $scopes)
-    {
-        $key = json_decode(file_get_contents($keyFilePath), true);
-        $jwt = $this->createJwt($key, $scopes);
-
-        $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
-            'grant_type' => 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-            'assertion' => $jwt,
-        ]);
-
-        if ($response->successful() && isset($response['access_token'])) {
-            return $response['access_token'];
-        }
-
-        throw new Exception('Failed to obtain access token: ' . $response->body());
+    public $firebaseNotificationService;
+    public function __construct(FirebaseNotificationService $firebaseNotificationService) {
+        $this->firebaseNotificationService = $firebaseNotificationService;
     }
 
     public function sendNotification(Request $request)
@@ -72,31 +30,54 @@ class NotificationController extends Controller
             $keyFilePath = storage_path('app/firebase/firebase_credentials.json');
             $scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
             
-            $scopes = $this->getAccessToken($keyFilePath, $scopes);
+            $scopes = $this->firebaseNotificationService->getAccessToken($keyFilePath, $scopes);
+
+            // $data = [
+            //     "message" => [
+            //         "topic" => "notification",
+            //         "data" => [
+            //             "title" => $notification->title,
+            //             "body" => $notification->desc,
+            //         ],
+            //     ],
+            // ];
+
+            $token = "fBt02IFnREyjxWQVkfh3VW:APA91bFgW56drB5OoN5RDfNp13bGJPlyQGP7ls4ZY_Ts0WlJZYgcHqU72yklCyoZSOloW6-hT_DMTK8ECjoBjYPfTuLXuKf5bSOejc1Vo9ibZqpgULVjmMM";
 
             $data = [
                 "message" => [
-                    "topic" => "notification",
+                    // "topic"=>"your_topic_name",
+                    "token" => "",
                     "data" => [
                         "title" => $notification->title,
                         "body" => $notification->desc,
                     ],
+                    "notification" => [
+                        "title" => $notification->title,
+                        "body" => $notification->desc,
+                    ]
                 ],
             ];
 
-            $response = Http::withToken($scopes)
-                ->withHeaders(['Content-Type' => 'application/json'])
-                ->post('https://fcm.googleapis.com/v1/projects/matrimonial-webtis/messages:send', $data);
+            // return response()->json($data);
 
-            if ($response->successful()) {
+            $response = $this->firebaseNotificationService->sendNotification($token, $notification->title, $notification->desc);
+
+            // $response = Http::withToken($scopes)
+            //     ->withHeaders(['Content-Type' => 'application/json'])
+            //     ->post('https://fcm.googleapis.com/v1/projects/matrimonial-webtis/messages:send', $data);
+
+                // dd($response->json());
+
+            if ($response['status']) {
                 return redirect()->route('notification.index')
                                 ->with('success', 'Notification sent successfully.');
             } else {
                 
-                $errorMessage = $response->json()['message'] ?? $response->body();
+                // $errorMessage = $response->json()['message'] ?? $response->body();
 
                 return redirect()->route('notification.index')
-                                ->with('error', 'Something went wrong: ' . $errorMessage);
+                                ->with('error', 'Something went wrong: ');
             }
 
         } catch (Exception $e) {
