@@ -146,5 +146,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(InterestNot::class, 'user_id');
     }
+    public function chats()
+    {
+        return $this->belongsToMany(User::class, 'chats', 'user_id', 'contact_id')
+                    ->withTimestamps();
+    }
 
 }

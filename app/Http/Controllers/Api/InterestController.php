@@ -38,7 +38,7 @@ class InterestController extends Controller
 
         $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
-        return MethodController::successResponseSimple('Interest 1 request sent successfully.');
+        return MethodController::successResponseSimple('Interest request sent successfully.');
     }
 
     public function acceptInterest(Interest $interest)
@@ -82,7 +82,7 @@ class InterestController extends Controller
         $deviceToken = $sender->fcm_token ?? null;
         $title = 'Interest Rejected';
         $body = $receiver->name . ' has rejected your interest request.';
-        
+
         $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
         return MethodController::successResponseSimple('Interest rejected.');

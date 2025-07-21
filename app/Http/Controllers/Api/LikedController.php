@@ -8,9 +8,16 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Api\MethodController;
 use Illuminate\Support\Facades\Validator;
+use App\Services\FirebaseNotificationService;
 
 class LikedController extends Controller
 {
+    protected $firebaseNotificationService;
+
+    public function __construct(FirebaseNotificationService $firebaseNotificationService)
+    {
+        $this->firebaseNotificationService = $firebaseNotificationService;
+    }
     public function likeUser(Request $request)
     {
         $request->validate([
@@ -31,6 +38,13 @@ class LikedController extends Controller
             return MethodController::successResponse('User unliked successfully', $likedId);
         } else {
             $liker->likes()->attach($likedId);
+
+            $deviceToken = $liker->fcm_token ?? null;
+            $title = 'Someone Likes You!';
+            $body = $liker->name . ' has liked your profile.';
+
+            $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
+
             return MethodController::successResponse('User liked successfully', $likedId);
         }
     }
