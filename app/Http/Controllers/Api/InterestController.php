@@ -20,22 +20,23 @@ class InterestController extends Controller
     {
         $sender = auth()->user();
 
-        if ($sender->id === $receiver->id) {
+        $senderId = $sender->id ?? null;
+        $receiverId = $receiver->id ?? null;
+
+        if ($senderId === $receiverId) {
             return MethodController::errorResponse('Cannot express interest in yourself.', 400);
         }
 
         $interest = Interest::firstOrCreate([
-            'sender_id' => $sender->id ?? null,
-            'receiver_id' => $receiver->id ?? null,
+            'sender_id' => $senderId,
+            'receiver_id' => $receiverId,
         ]);
 
-        $deviceToken = $sender->fcm_token ?? null;
-        $title = 'Hello!';
+        $deviceToken = $receiver->fcm_token ?? null;
+        $title = 'New Interest!';
         $body = 'You have a new interest request from ' . $sender->name . '.';
 
         $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
-
-        dd($response);
 
         return MethodController::successResponseSimple('Interest 1 request sent successfully.');
     }
@@ -57,6 +58,12 @@ class InterestController extends Controller
         $sender->chats()->syncWithoutDetaching([$receiver->id]);
         $receiver->chats()->syncWithoutDetaching([$sender->id]);
 
+        $deviceToken = $sender->fcm_token ?? null;
+        $title = 'Interest Accepted!';
+        $body = $receiver->name . ' has accepted your interest request.';
+
+        $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
+
         return MethodController::successResponseSimple('Interest accepted and chat started.');
     }
 
@@ -68,6 +75,15 @@ class InterestController extends Controller
         }
         $this->authorize('update', $interest);
         $interest->update(['status' => 'rejected']);
+
+        $sender = $interest->sender;
+        $receiver = $interest->receiver;
+
+        $deviceToken = $sender->fcm_token ?? null;
+        $title = 'Interest Rejected';
+        $body = $receiver->name . ' has rejected your interest request.';
+        
+        $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
         return MethodController::successResponseSimple('Interest rejected.');
     }
