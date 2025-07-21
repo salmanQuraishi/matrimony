@@ -25,24 +25,26 @@ class InterestController extends Controller
         }
 
         $interest = Interest::firstOrCreate([
-            'sender_id' => $sender->id,
-            'receiver_id' => $receiver->id,
+            'sender_id' => $sender->id ?? null,
+            'receiver_id' => $receiver->id ?? null,
         ]);
 
-        $deviceToken = 'fBt02IFnREyjxWQVkfh3VW:APA91bFgW56drB5OoN5RDfNp13bGJPlyQGP7ls4ZY_Ts0WlJZYgcHqU72yklCyoZSOloW6-hT_DMTK8ECjoBjYPfTuLXuKf5bSOejc1Vo9ibZqpgULVjmMM';
+        $deviceToken = $sender->fcm_token ?? null;
         $title = 'Hello!';
-        $body = 'This is a test notification.';
-        $data = ['key' => 'value']; // optional
+        $body = 'You have a new interest request from ' . $sender->name . '.';
 
-        $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body, $data);
+        $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
-        return MethodController::successResponseSimple('Interest request sent successfully.');
+        dd($response);
+
+        return MethodController::successResponseSimple('Interest 1 request sent successfully.');
     }
 
     public function acceptInterest(Interest $interest)
     {
 
-        if ($interest->status === 'accepted') {
+        $status = $interest->status ?? null;
+        if ($status === 'accepted') {
             return MethodController::successResponseSimple('Interest already accepted.');
         }
 
@@ -60,7 +62,8 @@ class InterestController extends Controller
 
     public function rejectInterest(Interest $interest)
     {
-        if ($interest->status === 'rejected') {
+        $status = $interest->status ?? null;
+        if ($status === 'rejected') {
             return MethodController::successResponseSimple('Interest already rejected.');
         }
         $this->authorize('update', $interest);

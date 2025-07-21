@@ -26,21 +26,6 @@ class NotificationController extends Controller
             if (!$notification) {
                 return redirect('notification')->with('error', 'Notification not found.');
             }
-            
-            $keyFilePath = storage_path('app/firebase/firebase_credentials.json');
-            $scopes = ['https://www.googleapis.com/auth/firebase.messaging'];
-            
-            $scopes = $this->firebaseNotificationService->getAccessToken($keyFilePath, $scopes);
-
-            // $data = [
-            //     "message" => [
-            //         "topic" => "notification",
-            //         "data" => [
-            //             "title" => $notification->title,
-            //             "body" => $notification->desc,
-            //         ],
-            //     ],
-            // ];
 
             $token = "fBt02IFnREyjxWQVkfh3VW:APA91bFgW56drB5OoN5RDfNp13bGJPlyQGP7ls4ZY_Ts0WlJZYgcHqU72yklCyoZSOloW6-hT_DMTK8ECjoBjYPfTuLXuKf5bSOejc1Vo9ibZqpgULVjmMM";
 
@@ -63,19 +48,11 @@ class NotificationController extends Controller
 
             $response = $this->firebaseNotificationService->sendNotification($token, $notification->title, $notification->desc);
 
-            // $response = Http::withToken($scopes)
-            //     ->withHeaders(['Content-Type' => 'application/json'])
-            //     ->post('https://fcm.googleapis.com/v1/projects/matrimonial-webtis/messages:send', $data);
-
-                // dd($response->json());
-
             if ($response['status']) {
                 return redirect()->route('notification.index')
                                 ->with('success', 'Notification sent successfully.');
             } else {
                 
-                // $errorMessage = $response->json()['message'] ?? $response->body();
-
                 return redirect()->route('notification.index')
                                 ->with('error', 'Something went wrong: ');
             }

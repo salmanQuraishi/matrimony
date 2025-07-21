@@ -22,6 +22,11 @@ class MatchController extends Controller
         ->pluck('receiver_id')
         ->toArray();
 
+        $notInterestUserIds = DB::table('not_interests')
+        ->where('user_id', $user->id)
+        ->pluck('not_interest_user_id')
+        ->toArray();
+
         // Get IDs of users the authenticated user has liked
         $likedUserIds = $user->likes()->pluck('users.id')->toArray();
 
@@ -29,6 +34,8 @@ class MatchController extends Controller
         $matches = User::where('id', '!=', $user->id)
         
             ->whereNotIn('id', $sentInterestUserIds)
+            
+            ->whereNotIn('id', $notInterestUserIds)
 
             ->when(!is_null($user->gender), function ($query) use ($user) {
                 return $query->where('gender', '!=', $user->gender);
