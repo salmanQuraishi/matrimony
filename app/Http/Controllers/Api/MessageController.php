@@ -12,65 +12,64 @@ use Illuminate\Support\Facades\DB;
 
 class MessageController extends Controller
 {
-public function chatList()
-{
-    $userId = Auth::id();
+    public function chatList()
+    {
+        $userId = Auth::id();
 
-    $messages = Message::where('sender_id', $userId)
-        ->orWhere('receiver_id', $userId)
-        ->latest()
-        ->get();
+        $messages = Message::where('sender_id', $userId)
+            ->orWhere('receiver_id', $userId)
+            ->latest()
+            ->get();
 
-    $chatUserIds = $messages->map(function ($message) use ($userId) {
-        return $message->sender_id == $userId ? $message->receiver_id : $message->sender_id;
-    })->unique();
+        $chatUserIds = $messages->map(function ($message) use ($userId) {
+            return $message->sender_id == $userId ? $message->receiver_id : $message->sender_id;
+        })->unique();
 
-    $chatList = $chatUserIds->map(function ($otherUserId) use ($userId) {
-        $otherUser = User::find($otherUserId);
+        $chatList = $chatUserIds->map(function ($otherUserId) use ($userId) {
+            $otherUser = User::find($otherUserId);
 
-        // dd($userId);
+            // dd($userId);
 
-        $lastMessage = Message::where(function ($q) use ($userId, $otherUserId) {
-            $q->where('sender_id', $userId)->where('receiver_id', $otherUserId);
-        })->orWhere(function ($q) use ($userId, $otherUserId) {
-            $q->where('sender_id', $otherUserId)->where('receiver_id', $userId);
-        })->latest()->first();
+            $lastMessage = Message::where(function ($q) use ($userId, $otherUserId) {
+                $q->where('sender_id', $userId)->where('receiver_id', $otherUserId);
+            })->orWhere(function ($q) use ($userId, $otherUserId) {
+                $q->where('sender_id', $otherUserId)->where('receiver_id', $userId);
+            })->latest()->first();
 
-        $unreadCount = Message::where('sender_id', $otherUserId)
-            ->where('receiver_id', $userId)
-            ->where('is_read', false)
-            ->count();
+            $unreadCount = Message::where('sender_id', $otherUserId)
+                ->where('receiver_id', $userId)
+                ->where('is_read', false)
+                ->count();
 
-        return [
-            'user' => [
-                'id' => $otherUser->id,
-                'name' => $otherUser->name,
-                'profile' => $otherUser->profile,
-            ],
-            'last_message' => $lastMessage->message ?? '',
-            'last_message_at' => $lastMessage->created_at ?? null,
-            'unread_count' => $unreadCount,
-        ];
-    });
+            return [
+                'user' => [
+                    'id' => $otherUser->id,
+                    'name' => $otherUser->name,
+                    'profile' => $otherUser->profile,
+                ],
+                'last_message' => $lastMessage->message ?? '',
+                'last_message_at' => $lastMessage->created_at ?? null,
+                'unread_count' => $unreadCount,
+            ];
+        });
 
-    return response()->json($chatList->sortByDesc('last_message_at')->values());
-}
+        return response()->json($chatList->sortByDesc('last_message_at')->values());
+    }
     
-    public function usermessages(Request $request)
+    public function usermessages($id)
     {
         $user = Auth::user();
-        
-        $messages = Message::where('sender_id', $user->id)
-        ->orWhere('receiver_id', $user->id)
-        ->orderBy('created_at', 'asc')
-        ->get();
-        // dd($messages);
-        
-        if ($messages->isEmpty()) {
-            return MethodController::errorResponse('Messages Data not found', 404);
-        }
 
-        return MethodController::successResponse('Messages Data',$messages);
+        $messages = Message::with('sender:id,name', 'receiver:id,name')
+            ->where(function ($q) use ($id) {
+                $q->where('sender_id', auth()->id())->where('receiver_id', $id);
+            })->orWhere(function ($q) use ($id) {
+                $q->where('sender_id', $id)->where('receiver_id', auth()->id());
+            })
+            ->orderBy('created_at')
+            ->get();
+        
+        return response()->json($messages);
     }
 
     public function store(Request $request)
@@ -111,4 +110,5 @@ public function chatList()
         
         return MethodController::successResponseSimple('Marked as read successfully');
     }
+    
 }

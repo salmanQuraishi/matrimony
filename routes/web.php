@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileTypeController;
 use App\Http\Controllers\EducationController;
 use App\Http\Controllers\OccupationController;
 use App\Http\Controllers\AnnualIncomeController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyTypeController;
 use App\Http\Controllers\JobTypeController;
 use App\Http\Controllers\UserController;
@@ -21,6 +22,12 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['au
 
 Route::middleware('auth')->group(function () {
 
+    // chat
+    Route::get('/chat/{id}', [ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/messages/{id}', [ChatController::class, 'getMessages'])->name('chat.getMessages');
+    Route::post('/chat/broadcast', [ChatController::class, 'broadcast'])->name('chat.broadcast');
+
+    // notification
     Route::get('/send/notification', [NotificationController::class, 'sendNotification'])->name('notification.send');
     Route::get('/notification/create', [NotificationController::class, 'create'])->name('notification.create');
     Route::post('/notification/store', [NotificationController::class, 'store'])->name('notification.store');
@@ -28,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/notification/edit/{id}', [NotificationController::class, 'edit'])->name('notification.edit');
     Route::post('/notification/update/{id}', [NotificationController::class, 'update'])->name('notification.update');
 
+    // caste
     Route::get('/get/caste/list/{religion}', [UserController::class, 'getCaste'])->name('user.caste');
     Route::get('/get/city/list/{state}', [UserController::class, 'getCity'])->name('user.city');
 

@@ -35,6 +35,12 @@
                         <td>{{$data->caste->name ?? null}}</td>
                         <td>{{ $data->created_at->format('Y-m-d') }}</td>
                         <td>
+                          <a href="{{route('chat.index',$data->id)}}" class="btn btn-info btn-sm">
+                            <span class="btn-label">
+                              <i class="fa fa-eye"></i>
+                            </span>
+                            Chat
+                          </a>
                           <a href="{{route('user.view',$data->id)}}" class="btn btn-info btn-sm">
                             <span class="btn-label">
                               <i class="fa fa-eye"></i>
