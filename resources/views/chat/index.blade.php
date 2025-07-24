@@ -30,6 +30,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         let receiverId = $('#receiver_id').val();
+        let reciverName = "{{$userData->name}}";
         
         $.get(`/chat/messages/${receiverId}`, function (messages) {
 
@@ -54,51 +55,41 @@
                 </div>
             `;
             $("#chatSection").append(newMessage);
+            scrollToBottom();
             });
         });
+
+        window.Echo.channel('chatMessage').listen('chat', e => {
+            const isReceiver = e.username === reciverName;
+            const side = isReceiver ? 'left' : 'right';
+            const name = isReceiver ? e.username : 'you';
+            const imgUrl = isReceiver 
+                ? 'https://cdn-icons-png.flaticon.com/128/3135/3135715.png' 
+                : 'https://cdn-icons-png.flaticon.com/128/149/149071.png';
+
+            const newMessage = `
+                <div class="msg ${side}-msg">
+                    <div class="msg-img" style="background-image: url(${imgUrl})"></div>
+                    <div class="msg-bubble">
+                        <div class="msg-info">
+                            <div class="msg-info-name">${name}</div>
+                            <div class="msg-info-time">12:45</div>
+                        </div>
+                        <div class="msg-text">${e.message}</div>
+                    </div>
+                </div>
+            `;
+            
+            $("#chatSection").append(newMessage);
+            scrollToBottom();
+        });
+        
     });
-    setTimeout(() => {
-        window.Echo.channel('chatMessage')
-            .listen('chat', (e) => {
 
-                let newMessage = '';
-
-                if (e.receiver_id == $("#receiver_id").val()) {
-                    newMessage = `
-                    <div class="msg left-msg">
-                        <div class="msg-img" style="background-image: url(https://cdn-icons-png.flaticon.com/128/3135/3135715.png)"></div>
-                        <div class="msg-bubble">
-                            <div class="msg-info">
-                                <div class="msg-info-name">${e.username}</div>
-                                <div class="msg-info-time">12:45</div>
-                            </div>
-                            <div class="msg-text">
-                                ${e.message}
-                            </div>
-                        </div>
-                    </div>
-                    `;
-                } else {
-                    newMessage = `
-                    <div class="msg right-msg">
-                        <div class="msg-img" style="background-image: url(https://cdn-icons-png.flaticon.com/128/149/149071.png)"></div>
-                        <div class="msg-bubble">
-                            <div class="msg-info">
-                                <div class="msg-info-name">${e.username}</div>
-                                <div class="msg-info-time">12:45</div>
-                            </div>
-                            <div class="msg-text">
-                                ${e.message}
-                            </div>
-                        </div>
-                    </div>
-                    `;
-                }
-
-                console.log('Received:', e.username);
-                $("#chatSection").append(newMessage);
-            });
-    }, 100);
+    function scrollToBottom() {
+        const chatSection = document.getElementById('chatSection');
+        chatSection.scrollTop = chatSection.scrollHeight;
+    }
 
     function broadcastMethod() {
         $.ajax({

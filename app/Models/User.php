@@ -148,7 +148,7 @@ class User extends Authenticatable
     }
     public function chats()
     {
-        return $this->belongsToMany(User::class, 'chats', 'user_id', 'contact_id')
+        return $this->belongsToMany(Chat::class, 'chats', 'user_id', 'contact_id')
                     ->withTimestamps();
     }
 

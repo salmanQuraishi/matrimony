@@ -37,7 +37,7 @@
                         <td>
                           <a href="{{route('chat.index',$data->id)}}" class="btn btn-info btn-sm">
                             <span class="btn-label">
-                              <i class="fa fa-eye"></i>
+                              <i class="fab fa-rocketchat"></i>
                             </span>
                             Chat
                           </a>
