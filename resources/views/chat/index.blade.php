@@ -14,7 +14,7 @@
                         <main class="msger-chat" id='chatSection'></main>
  
                         <div class="msger-inputarea">
-                            <input type="text" hidden id='receiver_id' value="{{$userData->id}}">
+                            <input type="text" hidden id='receiver_id' value="{{encrypt($userData->id)}}">
                             <input type="text" class="msger-input" placeholder="Enter your message..." id='message'>
                             <button class="msger-send-btn" onclick="broadcastMethod()">Send</button>
                         </div>
@@ -29,7 +29,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        let receiverId = $('#receiver_id').val();
+        let receiverId = "{{encrypt($userData->id)}}";
         let reciverName = "{{$userData->name}}";
         
         $.get(`/chat/messages/${receiverId}`, function (messages) {

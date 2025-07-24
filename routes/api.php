@@ -59,7 +59,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/interests/not/list', [InterestnotController::class, 'notInterestlist']);
 
     Route::get('/user/chat/list', [MessageController::class, 'chatList']);
-    Route::get('/user/messages', [MessageController::class, 'usermessages']);
+    Route::get('/user/messages/{id}', [MessageController::class, 'usermessages']);
     Route::post('/user/messages', [MessageController::class, 'store']);
     Route::patch('/user/messages/{id}/read', [MessageController::class, 'markAsRead']);
 

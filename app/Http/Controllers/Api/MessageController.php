@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\chat;
 use App\Models\Message;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -58,8 +59,6 @@ class MessageController extends Controller
     
     public function usermessages($id)
     {
-        $user = Auth::user();
-
         $messages = Message::with('sender:id,name', 'receiver:id,name')
             ->where(function ($q) use ($id) {
                 $q->where('sender_id', auth()->id())->where('receiver_id', $id);
@@ -84,11 +83,15 @@ class MessageController extends Controller
                 return MethodController::errorResponse($validator->errors()->first(), 422);
             }
 
+            $sender = Auth::user();
+
             $message = Message::create([
-                'sender_id' => Auth::id(),
+                'sender_id' => $sender->id,
                 'receiver_id' => $request->receiver_id,
                 'message' => $request->message,
             ]);
+
+            event(new chat($sender->name, $request->message));
 
             return MethodController::successResponse('Message sent successfully', $message);
 

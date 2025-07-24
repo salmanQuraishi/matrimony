@@ -35,7 +35,7 @@
                         <td>{{$data->caste->name ?? null}}</td>
                         <td>{{ $data->created_at->format('Y-m-d') }}</td>
                         <td>
-                          <a href="{{route('chat.index',$data->id)}}" class="btn btn-info btn-sm">
+                          <a href="{{route('chat.index',encrypt($data->id))}}" class="btn btn-info btn-sm">
                             <span class="btn-label">
                               <i class="fab fa-rocketchat"></i>
                             </span>
