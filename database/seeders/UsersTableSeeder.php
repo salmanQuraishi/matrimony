@@ -13,14 +13,14 @@ class UsersTableSeeder extends Seeder
         $users = [
             [
                 'dummyid' => 'TOP0001',
-                'name' => 'Admin User',
+                'name' => 'Super Admin',
                 'email' => 'admin@gmail.com',
                 'mobile' => '7409214495',
                 'password' => Hash::make('123456'),
             ],
             [
                 'dummyid' => 'TOP0002',
-                'name' => 'Test User',
+                'name' => 'salman quraishi',
                 'mobile' => '9149089862',
                 'password' => Hash::make('123456'),
             ],
