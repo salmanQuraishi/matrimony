@@ -25,7 +25,7 @@
     </div>
 </x-app-layout>
 
-@vite(['resources/js/app.js'])
+@vite(['resources/js/bootstrap.js'])
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
