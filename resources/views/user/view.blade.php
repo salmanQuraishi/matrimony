@@ -345,7 +345,7 @@
 
     function loadCaste() {
       let religion = $("#religionSelect").val();
-      let caste = {{$user->caste_id}};
+      let caste = {{$user->caste_id ?? 'null'}};
       let url = "{{ route('user.caste', ':religion') }}".replace(':religion', religion);
 
       if (religion) {
