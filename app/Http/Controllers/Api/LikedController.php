@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Api\CommonController;
 use App\Http\Controllers\Api\MethodController;
 use Illuminate\Support\Facades\Validator;
 use App\Services\FirebaseNotificationService;
@@ -44,6 +45,8 @@ class LikedController extends Controller
             $body = $liker->name . ' has liked your profile.';
 
             $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
+
+            CommonController::UserNotificationStore($liker->id, $title, $body, false);
 
             return MethodController::successResponse('User liked successfully', $likedId);
         }

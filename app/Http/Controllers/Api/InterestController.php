@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\CommonController;
 use App\Http\Controllers\Api\MethodController;
 use App\Models\Interest;
 use App\Services\FirebaseNotificationService;
@@ -38,6 +39,8 @@ class InterestController extends Controller
 
         $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
+        CommonController::UserNotificationStore($receiverId, $title, $body, false);
+
         return MethodController::successResponseSimple('Interest request sent successfully.');
     }
 
@@ -64,6 +67,8 @@ class InterestController extends Controller
 
         $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
+        CommonController::UserNotificationStore($receiver->id, $title, $body, false);
+
         return MethodController::successResponseSimple('Interest accepted and chat started.');
     }
 
@@ -84,6 +89,8 @@ class InterestController extends Controller
         $body = $receiver->name . ' has rejected your interest request.';
 
         $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
+
+        CommonController::UserNotificationStore($receiver->id, $title, $body, false);
 
         return MethodController::successResponseSimple('Interest rejected.');
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\MethodController;
 use Illuminate\Support\Facades\Validator;
@@ -17,6 +18,7 @@ use App\Models\Religion;
 use App\Models\State;
 use App\Models\City;
 use App\Models\Gallery;
+use App\Models\UserNotification;
 
 class CommonController extends Controller
 {
@@ -184,6 +186,52 @@ class CommonController extends Controller
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             return MethodController::errorResponse($e->errors(), 422);
+        } catch (\Exception $e) {
+            return MethodController::errorResponse('An unexpected error occurred.', 500);
+        }
+    }
+    public static function UserNotificationStore($userid,$title,$body,$isread)
+    {
+        UserNotification::create([
+            'user_id' => $userid,
+            'title' => $title,
+            'body' => $body,
+            'is_read' => $isread,
+        ]);
+        return MethodController::successResponseSimple('user notification send successfully');
+    }
+    public function getUserNotification()
+    {
+        $userId = auth()->id();
+
+        try {
+            $notifications = UserNotification::where('user_id', $userId)->get();
+
+            if ($notifications->isEmpty()) {
+                return MethodController::errorResponse('No notifications found.', 404);
+            }
+
+            return MethodController::successResponse('User notifications retrieved successfully.', $notifications);
+
+        } catch (\Exception $e) {
+            return MethodController::errorResponse('An unexpected error occurred.', 500);
+        }
+    }
+    public function UserNotificationRead(Request $request)
+    {
+        $userId = auth()->id();
+
+        try {
+            $updated = UserNotification::where('user_id', $userId)
+                        ->where('is_read', false)
+                        ->update(['is_read' => true]);
+
+            if ($updated === 0) {
+                return MethodController::errorResponse('No unread notifications found.');
+            }
+
+            return MethodController::successResponseSimple('All notifications marked as read.');
+
         } catch (\Exception $e) {
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }

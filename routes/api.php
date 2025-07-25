@@ -33,6 +33,9 @@ Route::get('/get/city/list/{state}', [CommonController::class, 'getCity']);
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
+    
+    Route::get('/get-user-notification', [CommonController::class, 'getUserNotification']);
+    Route::post('/user-notification-read', [CommonController::class, 'UserNotificationRead']);
 
     Route::post('/update-basic', [AuthController::class, 'updateBasic']);
     Route::post('/update-religion', [AuthController::class, 'updateReligion']);
