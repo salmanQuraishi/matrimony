@@ -362,22 +362,41 @@ class AuthController extends Controller
 
             $validated = $request->validate([
                 'images' => 'nullable',
-                'images.*' => 'image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+                'images.*' => 'image|mimes:jpg,jpeg,png,webp,svg',
             ]);
 
             $userId = $request->user()->id;
 
-            // print_r($request->images);
-            // return;
-
             if (!empty($request->images)) {
                 foreach ($request->images as $image) {
-                    $imgName = "profile/" . rand(99999, 9999999) . time() . '.' . $image->extension(); 
-                    $image->move(public_path('profile/'), $imgName);
+                    // Generate a unique name
+                    $filename = "profile_" . Str::random(10) . time() . '.' . $image->extension();
+                    $savePath = public_path('profile/' . $filename);
 
+                    // Open the image using Intervention
+                    $img = Gallery::make($image);
+
+                    // Optional: resize image if needed (e.g., max width)
+                    // $img->resize(1920, null, function ($constraint) {
+                    //     $constraint->aspectRatio();
+                    //     $constraint->upsize();
+                    // });
+
+                    // Try compressing image to be under 1MB
+                    $quality = 90;
+                    do {
+                        $img->encode($image->getClientOriginalExtension(), $quality);
+                        $imgSize = strlen((string) $img); // in bytes
+                        $quality -= 5;
+                    } while ($imgSize > 1024 * 1024 && $quality > 10); // target: < 1MB
+
+                    // Save compressed image
+                    file_put_contents($savePath, (string) $img);
+
+                    // Save to DB
                     Gallery::create([
                         'user_id'    => $userId,
-                        'image_path' => $imgName,
+                        'image_path' => 'profile/' . $filename,
                     ]);
                 }
             }
@@ -386,7 +405,6 @@ class AuthController extends Controller
                 'status'  => true,
                 'message' => 'Gallery updated successfully.',
             ], 200);
-
         } catch (ValidationException $e) {
             return response()->json([
                 'status' => false,
