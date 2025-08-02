@@ -74,6 +74,7 @@ class InterestController extends Controller
 
     public function rejectInterest(Interest $interest)
     {
+        dd($interest);
         $status = $interest->status ?? null;
         if ($status === 'rejected') {
             return MethodController::successResponseSimple('Interest already rejected.');
@@ -122,7 +123,7 @@ class InterestController extends Controller
 
     public function received()
     {
-        $received = auth()->user()->receivedInterests()->with('sender')->get();
+        $received = auth()->user()->receivedInterests()->where('status', 'pending')->with('sender')->get();
 
         $formatted = $received->map(function ($interest) {
             return [

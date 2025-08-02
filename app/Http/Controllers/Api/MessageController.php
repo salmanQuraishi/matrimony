@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\chat;
 use App\Models\Message;
+use App\Models\Chat as ChatModel;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
@@ -17,19 +18,21 @@ class MessageController extends Controller
     {
         $userId = Auth::id();
 
-        $messages = Message::where('sender_id', $userId)
-            ->orWhere('receiver_id', $userId)
-            ->latest()
-            ->get();
+        $chats = ChatModel::where(function ($query) use ($userId) {
+            $query->where('user_id', $userId)
+                ->orWhere('contact_id', $userId);
+        })->get();
 
-        $chatUserIds = $messages->map(function ($message) use ($userId) {
-            return $message->sender_id == $userId ? $message->receiver_id : $message->sender_id;
-        })->unique();
+        $uniqueChats = $chats->unique(function ($chat) {
+            $ids = [$chat->user_id, $chat->contact_id];
+            sort($ids);
+            return implode('-', $ids);
+        });
 
-        $chatList = $chatUserIds->map(function ($otherUserId) use ($userId) {
+        $chatList = $uniqueChats->map(function ($chat) use ($userId) {
+            
+            $otherUserId = $chat->user_id == $userId ? $chat->contact_id : $chat->user_id;
             $otherUser = User::find($otherUserId);
-
-            // dd($userId);
 
             $lastMessage = Message::where(function ($q) use ($userId, $otherUserId) {
                 $q->where('sender_id', $userId)->where('receiver_id', $otherUserId);
@@ -43,6 +46,7 @@ class MessageController extends Controller
                 ->count();
 
             return [
+                'chat_id' => $chat->id,
                 'user' => [
                     'id' => $otherUser->id,
                     'name' => $otherUser->name,
@@ -56,6 +60,7 @@ class MessageController extends Controller
 
         return response()->json($chatList->sortByDesc('last_message_at')->values());
     }
+
     
     public function usermessages($id)
     {
