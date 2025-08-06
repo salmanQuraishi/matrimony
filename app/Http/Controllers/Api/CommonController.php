@@ -19,9 +19,21 @@ use App\Models\State;
 use App\Models\City;
 use App\Models\Gallery;
 use App\Models\UserNotification;
+use App\Models\WebSetting;
 
 class CommonController extends Controller
 {
+    public function getSettings()
+    {
+        try {
+            $setting = WebSetting::first();
+
+            return MethodController::successResponse('setting Data', $setting);
+
+        } catch (\Exception $e) {
+            return MethodController::errorResponse('An unexpected error occurred.', 500);
+        }
+    }
     public function getReligion()
     {
         try {

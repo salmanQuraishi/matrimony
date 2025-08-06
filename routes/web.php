@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReligionController;
 use App\Http\Controllers\CasteController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\CompanyTypeController;
 use App\Http\Controllers\JobTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\WebSettingController;
 
 Route::fallback(function () {
     return view('error.404');
@@ -21,6 +24,21 @@ Route::fallback(function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+
+    // Clear cache
+    Route::get('/clear-cache', function () {
+        Cache::forget('websetting');
+
+        Artisan::call('config:cache');
+        Artisan::call('view:clear');
+        Artisan::call('route:cache');
+
+        return redirect()->back()->with('success', 'Cache cleared successfully!');
+    })->name('cache.clear');
+
+    // web setting
+    Route::get('/web/setting', [WebSettingController::class, 'index'])->name('websetting.index');
+    Route::put('/web/setting', [WebSettingController::class, 'update'])->name('websetting.update');
 
     // chat
     Route::get('/chat/{id}', [ChatController::class, 'index'])->name('chat.index');

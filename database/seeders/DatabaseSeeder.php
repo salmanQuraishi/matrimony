@@ -21,5 +21,6 @@ class DatabaseSeeder extends Seeder
         $this->call(JobTypeSeeder::class);
         $this->call(CompanyTypeSeeder::class);
         $this->call(TblNotificationSeeder::class);
+        $this->call(SettingSeeder::class);
     }
 }

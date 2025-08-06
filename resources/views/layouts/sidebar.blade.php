@@ -5,7 +5,7 @@
           <div class="logo-header" data-background-color="dark">
             <a href="{{route('dashboard')}}" class="logo">
               <img
-                src="{{asset('/')}}assets/img/kaiadmin/logo_light.svg"
+                src="{{ asset($websetting->logo) }}"
                 alt="navbar brand"
                 class="navbar-brand"
                 height="20"
@@ -30,13 +30,13 @@
             <ul class="nav nav-secondary">             
               <li class="nav-item active">
                 <a href="{{route('dashboard')}}">
-                  <i class="fas fas fa-home"></i>
+                  <i class="fas fa-home"></i>
                   <p>Dashboard</p>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="{{route('user.index')}}">
-                  <i class="fas fas fa-users"></i>
+                  <i class="fas fa-users"></i>
                   <p>User</p>
                 </a>
               </li>
@@ -93,8 +93,20 @@
               </li>
               <li class="nav-item">
                 <a href="{{route('notification.index')}}">
-                  <i class="fas fas fa-bell"></i>
+                  <i class="fas fa-bell"></i>
                   <p>Notification</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('websetting.index')}}">
+                  <i class="fas fa-desktop"></i>
+                  <p>Web Setting</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{route('cache.clear')}}">
+                  <i class="fas fa-trash-alt"></i>
+                  <p>Cashe Clear</p>
                 </a>
               </li>
               <li class="nav-item">
@@ -122,7 +134,7 @@
             <div class="logo-header" data-background-color="dark">
               <a href="{{route('dashboard')}}" class="logo">
                 <img
-                  src="{{asset('/')}}assets/img/kaiadmin/logo_light.svg"
+                  src="{{ asset($websetting->logo) }}"
                   alt="navbar brand"
                   class="navbar-brand"
                   height="20"
