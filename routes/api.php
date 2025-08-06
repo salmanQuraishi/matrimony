@@ -54,6 +54,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/interests/send/{receiver}', [InterestController::class, 'sendInterest']);
     Route::post('/interests/accept/{interest}', [InterestController::class, 'acceptInterest']);
     Route::post('/interests/reject/{interest}', [InterestController::class, 'rejectInterest']);
+    Route::post('/interests/revoke/{interest}', [InterestController::class, 'revokeInterest']);
     Route::get('/interests/sent', [InterestController::class, 'sent']);
     Route::get('/interests/received', [InterestController::class, 'received']);
     

@@ -74,7 +74,6 @@ class InterestController extends Controller
 
     public function rejectInterest(Interest $interest)
     {
-        dd($interest);
         $status = $interest->status ?? null;
         if ($status === 'rejected') {
             return MethodController::successResponseSimple('Interest already rejected.');
@@ -95,10 +94,26 @@ class InterestController extends Controller
 
         return MethodController::successResponseSimple('Interest rejected.');
     }
+    public function revokeInterest(Interest $interest)
+    {
+        $status = $interest->status ?? null;
+
+        if ($status === 'accepted' || $status === 'rejected') {
+            return MethodController::successResponseSimple('Interest already processed.');
+        }
+
+        if ($interest->receiver_id !== auth()->id()) {
+            return MethodController::errorResponse('Unauthorized action.', 403);
+        }
+
+        $interest->delete();
+
+        return MethodController::successResponseSimple('Interest revoked.');
+    }
 
     public function sent()
     {
-        $sent = auth()->user()->sentInterests()->with('receiver')->get();
+        $sent = auth()->user()->sentInterests()->where('status', 'pending')->with('receiver')->get();
 
         $formatted = $sent->map(function ($interest) {
             return [
