@@ -102,7 +102,7 @@ class InterestController extends Controller
             return MethodController::successResponseSimple('Interest already processed.');
         }
 
-        if ($interest->receiver_id !== auth()->id()) {
+        if ($interest->receiver_id === auth()->id()) {
             return MethodController::errorResponse('Unauthorized action.', 403);
         }
 
