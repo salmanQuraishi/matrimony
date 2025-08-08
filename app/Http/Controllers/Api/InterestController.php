@@ -78,9 +78,7 @@ class InterestController extends Controller
         if ($status === 'rejected') {
             return MethodController::successResponseSimple('Interest already rejected.');
         }
-        $this->authorize('update', $interest);
-        $interest->update(['status' => 'rejected']);
-
+        
         $sender = $interest->sender;
         $receiver = $interest->receiver;
 
@@ -88,10 +86,11 @@ class InterestController extends Controller
         $title = 'Interest Rejected';
         $body = $receiver->name . ' has rejected your interest request.';
 
-        $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
+        $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
         CommonController::UserNotificationStore($receiver->id, $title, $body, false);
 
+        $interest->delete();
         return MethodController::successResponseSimple('Interest rejected.');
     }
     public function revokeInterest(Interest $interest)
