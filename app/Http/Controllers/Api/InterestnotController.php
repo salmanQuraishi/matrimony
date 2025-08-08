@@ -27,8 +27,15 @@ class InterestnotController extends Controller
     }
 
     // Revoke a "not interest"
-    public function revokeInterest(InterestNot $interestnot)
+    public function revokeInterest($interestnot)
     {
+
+        $interestnot = InterestNot::find(['id' => $interestnot]);       
+
+        if (!$interestnot || $interestnot->isEmpty()) {
+            return MethodController::errorResponse('Not interest not found.', 404);
+        }
+
         // Authorization check (optional but recommended)
         if ($interestnot->user_id !== auth()->id()) {
             return MethodController::errorResponse('Unauthorized action.', 403);
