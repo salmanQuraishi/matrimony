@@ -30,9 +30,9 @@ class InterestnotController extends Controller
     public function revokeInterest($interestnot)
     {
 
-        $interestnot = InterestNot::find(['id' => $interestnot]);       
+        $interestnot = InterestNot::find(['id' => $interestnot])->first();       
 
-        if (!$interestnot || $interestnot->isEmpty()) {
+        if (!$interestnot) {
             return MethodController::errorResponse('Not interest not found.', 404);
         }
 
