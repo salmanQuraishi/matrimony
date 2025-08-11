@@ -438,6 +438,7 @@ class AuthController extends Controller
     public function Home()
     {
         try {
+            
             $user = auth()->user();
 
             if (!$user) {
