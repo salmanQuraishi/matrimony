@@ -45,7 +45,6 @@ class MethodController extends Controller
         $user = User::with('profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste','state','city','galleries')->where('id', $user)->first();
         
         return [
-            'likes' => $user->likedBy()->count(),
             'id' => $user->id,
             'dummyid' => $user->dummyid ?? null,
             'name' => $user->name ?? null,

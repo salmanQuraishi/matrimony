@@ -7,7 +7,6 @@ use App\Http\Controllers\Api\CommonController;
 use App\Http\Controllers\Api\InterestController;
 use App\Http\Controllers\Api\LikedController;
 use App\Http\Controllers\Api\MatchController;
-use App\Http\Controllers\Api\ChatController;
 use App\Http\Controllers\Api\InterestnotController;
 use App\Http\Controllers\Api\MessageController;
 
@@ -35,6 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
     
+    Route::get('/home', [AuthController::class, 'Home']);
+
     Route::get('/get-user-notification', [CommonController::class, 'getUserNotification']);
     Route::post('/user-notification-read', [CommonController::class, 'UserNotificationRead']);
 

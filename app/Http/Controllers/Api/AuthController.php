@@ -14,6 +14,8 @@ use Illuminate\Support\Str;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Api\MethodController;
 use App\Models\Gallery;
+use App\Models\Interest;
+use App\Models\InterestNot;
 
 class AuthController extends Controller
 {
@@ -433,6 +435,45 @@ class AuthController extends Controller
             ], 500);
         }
     }
+    public function Home(Request $request)
+    {
+        try {
+            $request->headers->set('Accept', 'application/json');
+
+            $user = auth()->user();
+
+            if (!$user) {
+                return response()->json([
+                    'status'  => false,
+                    'message' => 'Unauthorized',
+                ], 401);
+            }
+
+            $likesCount           = $user->likedBy()->count();
+            $sendRequestCount     = Interest::where('sender_id', $user->id)->count();
+            $receivedRequestCount = Interest::where('receiver_id', $user->id)->count();
+            $notInterestedCount   = InterestNot::where('user_id', $user->id)->count();
+            
+            return response()->json([
+                'status'  => true,
+                'message' => 'User Data',
+                'data' => [
+                    'likes'             => $likesCount,
+                    'sent_requests'     => $sendRequestCount,
+                    'received_requests' => $receivedRequestCount,
+                    'not_interested'    => $notInterestedCount,
+                ],
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status'  => false,
+                'error'   => 'An unexpected error occurred.',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
     public function logout(Request $request)
     {
         $user = $request->user();
