@@ -437,7 +437,7 @@ class AuthController extends Controller
     }
     public function Home()
     {
-        try {
+        try { 
             $user = auth()->user();
             if (!$user) {
                 return response()->json([
