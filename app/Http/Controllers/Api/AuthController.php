@@ -435,11 +435,9 @@ class AuthController extends Controller
             ], 500);
         }
     }
-    public function Home(Request $request)
+    public function Home()
     {
         try {
-            $request->headers->set('Accept', 'application/json');
-
             $user = auth()->user();
 
             if (!$user) {
@@ -456,7 +454,7 @@ class AuthController extends Controller
             
             return response()->json([
                 'status'  => true,
-                'message' => 'User Data',
+                'message' => 'User Dashboard',
                 'data' => [
                     'total_likes'             => $likesCount,
                     'sent_requests'     => $sendRequestCount,
