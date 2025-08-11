@@ -458,7 +458,7 @@ class AuthController extends Controller
                 'status'  => true,
                 'message' => 'User Data',
                 'data' => [
-                    'likes'             => $likesCount,
+                    'total_likes'             => $likesCount,
                     'sent_requests'     => $sendRequestCount,
                     'received_requests' => $receivedRequestCount,
                     'not_interested'    => $notInterestedCount,
