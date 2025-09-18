@@ -41,7 +41,7 @@ class AuthController extends Controller
         try {
             $user = User::create([
                 'fcm_token' => $request->fcm_token,
-                'dummyid' => MethodController::generateUniqueDummyId('WEB', 6),
+                'dummyid' => MethodController::generateUniqueDummyId('NT', 6),
                 'profile_for' => $request->profile_for,
                 'name' => $request->name,
                 'mobile' => $request->mobile,
