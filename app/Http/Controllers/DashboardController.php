@@ -17,7 +17,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalUser = User::count();
+        $totalUser = User::where('id','!=',1)->count();
 
         $totalReligion = Religion::count();
 
