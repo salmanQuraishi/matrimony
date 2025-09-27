@@ -151,5 +151,13 @@ class User extends Authenticatable
         return $this->belongsToMany(Chat::class, 'chats', 'user_id', 'contact_id')
                     ->withTimestamps();
     }
+    public function sentNotifications()
+    {
+        return $this->hasMany(UserNotification::class, 'sender_id');
+    }
+    public function receivedNotifications()
+    {
+        return $this->hasMany(UserNotification::class, 'receiver_id');
+    }
 
 }

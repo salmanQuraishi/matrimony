@@ -39,7 +39,7 @@ class InterestController extends Controller
 
         $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
-        CommonController::UserNotificationStore($receiverId, $title, $body, false);
+        CommonController::UserNotificationStore($senderId,$receiverId, $title, $body, false);
 
         return MethodController::successResponseSimple('Interest request sent successfully.');
     }
@@ -67,7 +67,7 @@ class InterestController extends Controller
 
         $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
-        CommonController::UserNotificationStore($receiver->id, $title, $body, false);
+        CommonController::UserNotificationStore($sender->id,$receiver->id, $title, $body, false);
 
         return MethodController::successResponseSimple('Interest accepted and chat started.');
     }
@@ -88,7 +88,7 @@ class InterestController extends Controller
 
         $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
-        CommonController::UserNotificationStore($receiver->id, $title, $body, false);
+        CommonController::UserNotificationStore($sender->id,$receiver->id, $title, $body, false);
 
         $interest->delete();
         return MethodController::successResponseSimple('Interest rejected.');

@@ -202,33 +202,49 @@ class CommonController extends Controller
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }
     }
-    public static function UserNotificationStore($userid,$title,$body,$isread)
+    public static function UserNotificationStore($senderId, $receiverId, $title, $body, $isRead = false)
     {
-        UserNotification::create([
-            'user_id' => $userid,
-            'title' => $title,
-            'body' => $body,
-            'is_read' => $isread,
-        ]);
-        return MethodController::successResponseSimple('user notification send successfully');
+        try {
+            UserNotification::create([
+                'sender_id'   => $senderId,
+                'receiver_id' => $receiverId,
+                'title' => $title,
+                'body' => $body,
+                'is_read' => $isRead,
+            ]);
+
+            return MethodController::successResponseSimple('User notification sent successfully.');
+
+        } catch (\Exception $e) {
+            return MethodController::errorResponse('Failed to send notification.', 500);
+        }
     }
+
     public function getUserNotification()
     {
         $userId = auth()->id();
 
         try {
-            $notifications = UserNotification::where('user_id', $userId)->get();
+            
+            $notifications = UserNotification::with('sender')
+                ->where('receiver_id', $userId)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             if ($notifications->isEmpty()) {
                 return MethodController::errorResponse('No notifications found.', 404);
             }
 
-            return MethodController::successResponse('User notifications retrieved successfully.', $notifications);
+            return MethodController::successResponse(
+                'User notifications retrieved successfully.',
+                $notifications
+            );
 
         } catch (\Exception $e) {
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }
     }
+
     public function UserNotificationRead(Request $request)
     {
         $userId = auth()->id();

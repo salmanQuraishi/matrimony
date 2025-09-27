@@ -46,7 +46,7 @@ class LikedController extends Controller
 
             $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
 
-            CommonController::UserNotificationStore($liker->id, $title, $body, false);
+            CommonController::UserNotificationStore($liker->id,$likedId, $title, $body, false);
 
             return MethodController::successResponse('User liked successfully', $likedId);
         }
