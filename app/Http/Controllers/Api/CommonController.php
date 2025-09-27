@@ -188,7 +188,8 @@ class CommonController extends Controller
 
             $Caste = City::where('state_id', $state)
                         ->where('status', 'Active')
-                        ->get(['cityid', 'name']);
+                        ->get(['cityid', 'name'])
+                        ->orderBy('name', 'asc');
 
             if ($Caste->isEmpty()) {
                 return MethodController::errorResponse('Caste Data not found', 404);
