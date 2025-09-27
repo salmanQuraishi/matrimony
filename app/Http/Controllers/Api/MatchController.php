@@ -17,8 +17,11 @@ class MatchController extends Controller
         $user = Auth::user();
 
         $sentInterestUserIds = DB::table('interests')
-        ->where('sender_id', $user->id)
-        ->orWhere('receiver_id', $user->id)
+        // ->where('sender_id', $user->id)
+        ->where(function($query) use ($user) {
+            $query->where('sender_id', $user->id)
+                ->orWhere('receiver_id', $user->id);
+        })
         ->whereIn('status', ['pending', 'accepted'])
         ->pluck('receiver_id')
         ->toArray();
