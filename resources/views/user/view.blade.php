@@ -138,12 +138,15 @@
                 <h6><b>Religion Details</b></h6>
                 <div class="row">
                   <div class="col-md-3">
+                    @php
+                      $muslimId = collect($religions)->firstWhere('name', 'Muslim')->id ?? null;
+                    @endphp
                     <x-user-select 
                       label="Religion" 
                       id="religionSelect" 
                       name="religion_id" 
                       :options="$religions"
-                      :selected="old('religion_id',$user->religion_id)" 
+                      :selected="old('religion_id', $user->religion_id ?? $muslimId)" 
                       :disabled="$disabled"
                     />
                   </div>
@@ -357,7 +360,17 @@
             casteSelect.empty();
 
             $.each(response.castes, function(key, value) {
-              let selected = (value.id == caste) ? 'selected' : '';
+
+              let selected = '';
+
+              if (caste) {
+                selected = (value.id == caste) ? 'selected' : '';
+              } else {
+                // new user → Sunni default
+                if (value.name.toLowerCase() === 'sunni') {
+                  selected = 'selected';
+                }
+              }
               casteSelect.append('<option value="' + value.id + '" ' + selected + '>' + value.name + '</option>');
             });
           },
