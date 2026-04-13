@@ -185,12 +185,15 @@
                     />
                   </div>
                   <div class="col-md-3">
+                    @php
+                      $stateId = collect($States)->firstWhere('name', 'Uttar Pradesh')->id ?? null;
+                    @endphp
                     <x-user-select 
                       label="States" 
                       id="StateSelect" 
                       name="state_id" 
                       :options="$States"
-                      :selected="old('state_id',$user->state_id)"
+                      :selected="old('state_id',$user->state_id ?? $stateId)"
                       :disabled="$disabled"
                     />
                   </div>
