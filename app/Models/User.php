@@ -75,7 +75,7 @@ class User extends Authenticatable
     public function annualIncome()
     {
         return $this->belongsTo(AnnualIncome::class, 'annual_income_id', 'aid')
-                    ->select('aid', 'range');
+                    ->select('aid', 'range', 'range as name');
     }
     public function jobType()
     {
