@@ -248,11 +248,11 @@ class CommonController extends Controller
     public function UserNotificationRead(Request $request)
     {
         $userId = auth()->id();
-
+        
         try {
-            $updated = UserNotification::where('user_id', $userId)
-                        ->where('is_read', false)
-                        ->update(['is_read' => true]);
+            $updated = UserNotification::where('receiver_id', $userId)
+            ->where('is_read', false)
+            ->update(['is_read' => true]);
 
             if ($updated === 0) {
                 return MethodController::errorResponse('No unread notifications found.');
