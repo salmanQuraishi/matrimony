@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\CommonController;
 use App\Http\Controllers\Api\MethodController;
 use Illuminate\Support\Facades\Validator;
 use App\Services\FirebaseNotificationService;
+use App\Models\UserNotification;
 
 class LikedController extends Controller
 {
@@ -36,6 +37,12 @@ class LikedController extends Controller
 
         if ($alreadyLiked) {
             $liker->likes()->detach($likedId);
+
+            UserNotification::where('sender_id', $liker->id)
+            ->where('user_id', $likedId)
+            ->where('title', 'Someone Likes You!')
+            ->delete();
+
             return MethodController::successResponse('User unliked successfully', $likedId);
         } else {
             $liker->likes()->attach($likedId);
