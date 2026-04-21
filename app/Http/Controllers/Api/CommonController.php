@@ -205,13 +205,27 @@ class CommonController extends Controller
     public static function UserNotificationStore($senderId, $receiverId, $title, $body, $isRead = false)
     {
         try {
-            UserNotification::create([
-                'sender_id'   => $senderId,
-                'receiver_id' => $receiverId,
-                'title' => $title,
-                'body' => $body,
-                'is_read' => $isRead,
-            ]);
+
+             $notification = UserNotification::where('sender_id', $senderId)
+                ->where('receiver_id', $receiverId)
+                ->where('title', $title)
+                ->first();
+
+                if ($notification) {
+                    $notification->update([
+                        'body' => $body,
+                        'is_read' => $isRead,
+                        'updated_at' => now(),
+                    ]);
+                } else {
+                    UserNotification::create([
+                        'sender_id'   => $senderId,
+                        'receiver_id' => $receiverId,
+                        'title'       => $title,
+                        'body'        => $body,
+                        'is_read'     => $isRead,
+                    ]);
+                }
 
             return MethodController::successResponseSimple('User notification sent successfully.');
 
