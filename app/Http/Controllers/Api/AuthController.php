@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\CommonController;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -446,6 +447,8 @@ class AuthController extends Controller
                 ], 401);
             }
 
+            $unread_notification = CommonController::getUserNotificationCount($user->id);
+
             $likesCount           = $user->likedBy()->count();
             $sendRequestCount     = Interest::where('sender_id', $user->id)->count();
             $receivedRequestCount = Interest::where('receiver_id', $user->id)->count();
@@ -455,7 +458,7 @@ class AuthController extends Controller
                 'status'  => true,
                 'message' => 'User Dashboard',
                 'data' => [
-                    'unread_notification' => 5,
+                    'unread_notification' => $unread_notification,
                     'total_likes' => $likesCount,
                     'sent_requests' => $sendRequestCount,
                     'received_requests' => $receivedRequestCount,

@@ -264,5 +264,10 @@ class CommonController extends Controller
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }
     }
+    
+    public static function getUserNotificationCount($userId)
+    {
+        return UserNotification::where('receiver_id', $userId)->count();
+    }
 
 }
