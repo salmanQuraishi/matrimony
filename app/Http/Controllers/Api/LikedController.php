@@ -39,7 +39,7 @@ class LikedController extends Controller
             $liker->likes()->detach($likedId);
 
             UserNotification::where('sender_id', $liker->id)
-            ->where('user_id', $likedId)
+            ->where('receiver_id', $likedId)
             ->where('title', 'Someone Likes You!')
             ->delete();
 
