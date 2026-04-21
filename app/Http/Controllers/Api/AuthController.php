@@ -455,10 +455,11 @@ class AuthController extends Controller
                 'status'  => true,
                 'message' => 'User Dashboard',
                 'data' => [
-                    'total_likes'             => $likesCount,
-                    'sent_requests'     => $sendRequestCount,
+                    'unread_notification' => 5,
+                    'total_likes' => $likesCount,
+                    'sent_requests' => $sendRequestCount,
                     'received_requests' => $receivedRequestCount,
-                    'not_interested'    => $notInterestedCount,
+                    'not_interested' => $notInterestedCount,
                 ],
             ], 200);
 
