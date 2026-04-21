@@ -266,7 +266,7 @@ class CommonController extends Controller
     }
     public static function getUserNotificationCount($userId)
     {
-        return UserNotification::where('receiver_id', $userId)->count();
+        return UserNotification::where('receiver_id', $userId)->where('is_read', 0)->count();
     }
 
 }
