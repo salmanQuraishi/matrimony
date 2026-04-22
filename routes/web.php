@@ -62,6 +62,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/user/view/{id}', [UserController::class, 'edit'])->name('user.view');
     Route::get('/user/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/update/{id}', [UserController::class, 'update'])->name('user.update');
+    Route::get('/user/gallery/{id}', [UserController::class, 'gallery'])->name('gallery.index');
+    Route::post('/user/gallery/store/{id}', [UserController::class, 'store'])->name('gallery.store');
+    Route::delete('/user/gallery/destroy/{id}', [UserController::class, 'destroy'])->name('gallery.destroy');
 
     // religion
     Route::get('/religion', [ReligionController::class, 'index'])->name('religion.index');

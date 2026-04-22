@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Religion;
 use App\Models\User;
+use App\Models\Gallery;
+use App\Models\Religion;
 use App\Models\ProfileType;
 use App\Models\CompanyType;
 use App\Models\JobType;
@@ -123,6 +124,43 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->route('user.edit', $user->id)->with('success', 'User updated successfully.');
+    }
+
+    public function gallery($userid)
+    {
+        $gallery = Gallery::where('user_id', $userid)->get();
+
+        return view('gallery.index',compact('gallery','userid'));
+    }
+
+    public function store(Request $request, $id)
+    {
+        $request->validate([
+            'images' => 'required',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageName = time() . rand(1000, 9999) . '.' . $image->extension();
+
+                $image->move(public_path('uploads/gallery'), $imageName);
+
+                Gallery::create([
+                    'user_id' => $id,
+                    'image_path' => 'uploads/gallery/' . $imageName,
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Images uploaded successfully');
+    }
+
+    public function destroy($id)
+    {
+        $gallery = Gallery::findOrFail($id);
+        $gallery->delete();
+        return back()->with('success', 'Deleted Successfully');
     }
 
     public function getCaste($religion)
