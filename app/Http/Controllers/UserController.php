@@ -86,9 +86,20 @@ class UserController extends Controller
             'company_type_id'  => 'nullable|exists:company_types,ctid',
             'occupation_id'    => 'nullable|exists:occupations,oid',
             'annual_income_id' => 'nullable|exists:annual_incomes,aid',
+            'profile_image'    => 'nullable',
+            'profile_image.*'  => 'image|mimes:jpg,jpeg,png,webp,svg|max:2048',
         ]);
 
-        // Now assign fields manually
+        if ($request->profile_image) {
+            $profile = $user->profile;
+            if (!empty($profile) && file_exists(public_path($profile))) {
+                unlink(public_path($profile));
+            }
+            $imgName = rand(99999,9999999) . time() . '.' . $request->profile_image->extension();
+            $request->profile_image->move(public_path('profile'), $imgName);
+            $user->profile = 'profile/' . $imgName;
+        }
+
         $user->profile_for       = $request->input('profile_for');
         $user->name              = trim($request->input('name'));
         $user->mobile            = $request->input('mobile');

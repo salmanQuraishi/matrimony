@@ -19,7 +19,7 @@
 
             @if($formCondition === true)
             
-            <form action="{{ route('user.update', $user->id) }}" method="post">
+            <form action="{{ route('user.update', $user->id) }}" method="post" enctype="multipart/form-data">
               @csrf
               @method('PUT')
             
@@ -28,6 +28,31 @@
               <div class="card-body">
                 <h6><b>Profile Details</b></h6>
                 <div class="row">
+                  <div class="col-md-10">
+                    <div class="form-group">
+                      <label for="profile_image">Profile Image</label>
+                      <input type="file" name="profile_image" id="profile_image" class="form-control" {{$disabled}}>
+                      @error('profile_image')
+                        <small class="text-danger">{{ $message }}</small>
+                      @enderror
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group">
+                      <label>Current Image</label><br>
+                      @if(!empty($user->profile))
+                        <img 
+                          src="{{ asset($user->profile) }}" 
+                          alt="Profile Image"
+                          style="width:100px; height:100px; object-fit:cover; border-radius:50%; border:1px solid #ddd; padding:2px;"
+                        >
+                      @else
+                        <div style="width:100px; height:100px; border-radius:50%; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; color:#999;">
+                          No Image
+                        </div>
+                      @endif
+                    </div>
+                  </div>
                   <div class="col-md-3">
                     <x-form-input
                       type="text"
