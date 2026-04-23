@@ -13,6 +13,7 @@ use App\Http\Controllers\AnnualIncomeController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CompanyTypeController;
 use App\Http\Controllers\JobTypeController;
+use App\Http\Controllers\NikahCardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\WebSettingController;
@@ -66,8 +67,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/user/gallery/store/{id}', [UserController::class, 'store'])->name('gallery.store');
     Route::delete('/user/gallery/destroy/{id}', [UserController::class, 'destroy'])->name('gallery.destroy');
 
+    Route::get('/nikah-card/list/{id}', [NikahCardController::class, 'cardlist'])->name('nikah-card.list');
+    Route::get('/nikah-card/generate/{id}', [NikahCardController::class, 'generateCardForm'])->name('nikah-card.form');
+    Route::post('/nikah-card/generate/{id}', [NikahCardController::class, 'generate'])->name('nikah-card.generate');
+    Route::get('/nikah-card/download/{id}', [NikahCardController::class, 'download'])->name('nikah-card.download');
+    Route::delete('/nikah-card/delete/{id}', [NikahCardController::class, 'delete'])->name('nikah-card.delete');
+
+
+
     // religion
-    Route::get('/religion', [ReligionController::class, 'index'])->name('religion.index');
+    Route::get('/religion/', [ReligionController::class, 'index'])->name('religion.index');
     Route::get('/religion/create', [ReligionController::class, 'create'])->name('religion.create');
     Route::post('/religion/store', [ReligionController::class, 'store'])->name('religion.store');
     Route::get('/religion/edit/{id}', [ReligionController::class, 'edit'])->name('religion.edit');

@@ -77,6 +77,12 @@
                               title="Gallery">
                               <i class="fa fa-images"></i>
                             </a>
+
+                            <a href="{{ route('nikah-card.list', $data->id) }}" class="btn btn-secondary btn-sm icon-btn"
+                              title="card">
+                              <i class="fa fa-file"></i>
+                            </a>
+
                           </div>
                         </td>
                       </tr>
