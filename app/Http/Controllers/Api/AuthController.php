@@ -172,21 +172,35 @@ class AuthController extends Controller
     public function updateBasic(Request $request)
     {
         try {
-            $request->headers->set('Accept', 'application/json');
 
+            $request->headers->set('Accept', 'application/json');
             $user = $request->user();
 
             $request->validate([
-                'dob' => 'required', 'date',
-                'age' => 'required', 'integer', 'min:0',
+                'dob' => 'required|date',
+                'age' => 'required|integer|min:0',
                 'email' => 'required|email|unique:users,email,' . $user->id,
-                'gender' => 'required', 'in:male,female,other',
+                'gender' => 'required|in:male,female,other',
+                'address' => 'nullable|string|max:500',
+                'birthplace' => 'required|string|max:255',
+                'complexion_id' => 'required|exists:complexions,id',
+                'father_name' => 'required|string|max:255',
+                'mother_name' => 'required|string|max:255',
+                'brothers' => 'nullable|integer|min:0',
+                'sisters' => 'nullable|integer|min:0',
             ]);
 
             $user->age = $request->age;
             $user->dob = date('Y-m-d', strtotime($request->dob));
             $user->email = $request->email;
             $user->gender = $request->gender;
+            $user->address = $request->address;
+            $user->birthplace = $request->birthplace;
+            $user->complexion_id = $request->complexion_id;
+            $user->father_name = $request->father_name;
+            $user->mother_name = $request->mother_name;
+            $user->brothers = $request->brothers ?? 0;
+            $user->sisters = $request->sisters ?? 0;
             $user->save();
 
             return response()->json([
@@ -195,13 +209,19 @@ class AuthController extends Controller
             ], 200);
 
         } catch (ValidationException $e) {
+
             return response()->json([
+                'status' => false,
                 'errors' => $e->errors(),
             ], 422);
+
         } catch (\Exception $e) {
+
             return response()->json([
+                'status' => false,
                 'error' => 'An unexpected error occurred.',
             ], 500);
+
         }
     }
     public function updateReligion(Request $request)
