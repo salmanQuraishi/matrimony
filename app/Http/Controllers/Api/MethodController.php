@@ -42,10 +42,13 @@ class MethodController extends Controller
 
     public static function formatUserResponse($user)
     {
-        $user = User::with('complexion','profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste','state','city','galleries')->where('id', $user)->first();
-        
+        $user = User::with('complexion', 'profileFor', 'education', 'occupation', 'annualIncome', 'jobType', 'companyType', 'religion', 'caste', 'state', 'city', 'galleries')->where('id', $user)->first();
+
+        $profileCompletion = self::profileCompletion($user->id);
+
         return [
             'id' => $user->id,
+            'profile_completion' => $profileCompletion,
             'dummyid' => $user->dummyid ?? null,
             'name' => $user->name ?? null,
             'father_name' => $user->father_name ?? null,
@@ -76,6 +79,57 @@ class MethodController extends Controller
             'galleries' => $user->galleries ?? null,
             'complexion' => $user->complexion ?? null,
         ];
+    }
+
+    public static function profileCompletion($userId)
+    {
+        $user = User::find($userId);
+
+        if (!$user) {
+            return 0;
+        }
+
+        $fields = [
+            'company_type_id',
+            'job_type_id',
+            'annual_income_id',
+            'occupation_id',
+            'caste_id',
+            'religion_id',
+            'education_id',
+            'profile_for',
+            'city_id',
+            'state_id',
+            'complexion_id',
+            'name',
+            'father_name',
+            'mother_name',
+            'brothers',
+            'sisters',
+            'dummyid',
+            'email',
+            'mobile',
+            'age',
+            'dob',
+            'birthplace',
+            'height',
+            'weight',
+            'myself',
+            'address',
+            'profile',
+            'gender',
+        ];
+
+        $totalFields = count($fields);
+        $filledFields = 0;
+
+        foreach ($fields as $field) {
+            if (!empty($user->$field)) {
+                $filledFields++;
+            }
+        }
+
+        return round(($filledFields / $totalFields) * 100);
     }
     public static function generateUniqueDummyId($prefix = 'WEB', $length = 6)
     {
