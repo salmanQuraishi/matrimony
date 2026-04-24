@@ -13,6 +13,7 @@ use App\Models\JobType;
 use App\Models\AnnualIncome;
 use App\Models\Caste;
 use App\Models\City;
+use App\Models\Complexion;
 use App\Models\Education;
 use App\Models\Occupation;
 use App\Models\State;
@@ -21,46 +22,50 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('religion','caste')->where('id','!=',1)->get();
-        return view('user.index',compact('users'));
+        $users = User::with('religion', 'caste')->where('id', '!=', 1)->get();
+        return view('user.index', compact('users'));
     }
 
     public function edit($id)
     {
-        $religions = Religion::where('status','show')
-                    ->select('rid as id', 'name')
-                    ->get();
+        $religions = Religion::where('status', 'show')
+            ->select('rid as id', 'name')
+            ->get();
 
-        $States = State::where('status','active')
-                    ->select('sid as id', 'name')
-                    ->get();
+        $States = State::where('status', 'active')
+            ->select('sid as id', 'name')
+            ->get();
 
         $ProfileTypes = ProfileType::where('status', 'show')
-                        ->select('ptid as id', 'name')
-                        ->get();
+            ->select('ptid as id', 'name')
+            ->get();
 
         $CompanyType = CompanyType::where('status', 'show')
-                        ->select('ctid as id', 'name')
-                        ->get();
+            ->select('ctid as id', 'name')
+            ->get();
 
         $JobType = JobType::where('status', 'show')
-                        ->select('jtid as id', 'name')
-                        ->get();
-                        
+            ->select('jtid as id', 'name')
+            ->get();
+
         $AnnualIncome = AnnualIncome::where('status', 'show')
-                        ->select('aid as id', 'range as name')
-                        ->get();
+            ->select('aid as id', 'range as name')
+            ->get();
 
         $Occupation = Occupation::where('status', 'show')
-                        ->select('oid as id', 'name')
-                        ->get();
+            ->select('oid as id', 'name')
+            ->get();
 
         $Education = Education::where('status', 'show')
-                        ->select('eid as id', 'name')
-                        ->get();
+            ->select('eid as id', 'name')
+            ->get();
+
+        $Complexions = Complexion::where('status', 'show')
+            ->select('id', 'name', 'hindi_name')
+            ->get();
 
         $user = User::findOrFail($id);
-        return view('user.view', compact('user','religions','States','ProfileTypes','CompanyType','JobType','AnnualIncome','Occupation','Education'));
+        return view('user.view', compact('user', 'religions', 'States', 'ProfileTypes', 'CompanyType', 'JobType', 'AnnualIncome', 'Occupation', 'Education', 'Complexions'));
     }
 
     public function update(Request $request, $id)
@@ -68,27 +73,34 @@ class UserController extends Controller
         $user = User::findOrFail($id);
 
         $request->validate([
-            'profile_for'      => 'required',
-            'name'             => 'required|string|max:255',
-            'mobile'           => 'required|digits_between:10,15',
-            'myself'           => 'nullable|string',
-            'age'              => 'required|numeric|min:1|max:100',
-            'dob'              => 'required|date',
-            'email'            => 'required|email|max:255',
-            'gender'           => 'required|in:male,female,other',
-            'religion_id'      => 'required|exists:religions,rid',
-            'caste_id'         => 'nullable|exists:castes,cid',
-            'height'           => 'nullable|string',
-            'weight'           => 'nullable|string',
-            'state_id'         => 'required|exists:state,sid',
-            'city_id'          => 'required|exists:city,cityid',
-            'education_id'     => 'required|exists:educations,eid',
-            'job_type_id'      => 'nullable|exists:job_types,jtid',
-            'company_type_id'  => 'nullable|exists:company_types,ctid',
-            'occupation_id'    => 'nullable|exists:occupations,oid',
+            'profile_for' => 'required',
+            'name' => 'required|string|max:255',
+            'mobile' => 'required|digits_between:10,15',
+            'myself' => 'nullable|string',
+            'age' => 'required|numeric|min:1|max:100',
+            'dob' => 'required|date',
+            'email' => 'required|email|max:255',
+            'gender' => 'required|in:male,female,other',
+            'religion_id' => 'required|exists:religions,rid',
+            'caste_id' => 'nullable|exists:castes,cid',
+            'height' => 'nullable|string',
+            'weight' => 'nullable|string',
+            'state_id' => 'required|exists:state,sid',
+            'city_id' => 'required|exists:city,cityid',
+            'education_id' => 'required|exists:educations,eid',
+            'job_type_id' => 'nullable|exists:job_types,jtid',
+            'company_type_id' => 'nullable|exists:company_types,ctid',
+            'occupation_id' => 'nullable|exists:occupations,oid',
             'annual_income_id' => 'nullable|exists:annual_incomes,aid',
-            'profile_image'    => 'nullable',
-            'profile_image.*'  => 'image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'profile_image' => 'nullable',
+            'profile_image.*' => 'image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+            'father_name' => 'required|string|max:255',
+            'mother_name' => 'required|string|max:255',
+            'brothers' => 'nullable|integer|min:0',
+            'sisters' => 'nullable|integer|min:0',
+            'birthplace' => 'required|string|max:255',
+            'address' => 'required|string|max:500',
+            'complexion_id' => 'nullable|exists:castes,cid',
         ]);
 
         if ($request->profile_image) {
@@ -96,30 +108,37 @@ class UserController extends Controller
             if (!empty($profile) && file_exists(public_path($profile))) {
                 unlink(public_path($profile));
             }
-            $imgName = rand(99999,9999999) . time() . '.' . $request->profile_image->extension();
+            $imgName = rand(99999, 9999999) . time() . '.' . $request->profile_image->extension();
             $request->profile_image->move(public_path('profile'), $imgName);
             $user->profile = 'profile/' . $imgName;
         }
 
-        $user->profile_for       = $request->input('profile_for');
-        $user->name              = trim($request->input('name'));
-        $user->mobile            = $request->input('mobile');
-        $user->myself            = $request->input('myself');
-        $user->age               = $request->input('age');
-        $user->dob               = date('Y-m-d', strtotime($request->input('dob')));
-        $user->email             = strtolower($request->input('email'));
-        $user->gender            = $request->input('gender');
-        $user->religion_id       = $request->input('religion_id');
-        $user->caste_id          = $request->input('caste_id');
-        $user->height            = $request->input('height');
-        $user->weight            = $request->input('weight');
-        $user->state_id          = $request->input('state_id');
-        $user->city_id           = $request->input('city_id');
-        $user->education_id      = $request->input('education_id');
-        $user->job_type_id       = $request->input('job_type_id');
-        $user->company_type_id   = $request->input('company_type_id');
-        $user->occupation_id     = $request->input('occupation_id');
-        $user->annual_income_id  = $request->input('annual_income_id');
+        $user->profile_for = $request->input('profile_for');
+        $user->name = trim($request->input('name'));
+        $user->mobile = $request->input('mobile');
+        $user->myself = $request->input('myself');
+        $user->age = $request->input('age');
+        $user->dob = date('Y-m-d', strtotime($request->input('dob')));
+        $user->email = strtolower($request->input('email'));
+        $user->gender = $request->input('gender');
+        $user->religion_id = $request->input('religion_id');
+        $user->caste_id = $request->input('caste_id');
+        $user->height = $request->input('height');
+        $user->weight = $request->input('weight');
+        $user->state_id = $request->input('state_id');
+        $user->city_id = $request->input('city_id');
+        $user->education_id = $request->input('education_id');
+        $user->job_type_id = $request->input('job_type_id');
+        $user->company_type_id = $request->input('company_type_id');
+        $user->occupation_id = $request->input('occupation_id');
+        $user->annual_income_id = $request->input('annual_income_id');
+        $user->father_name = $request->father_name;
+        $user->mother_name = $request->mother_name;
+        $user->brothers = $request->brothers;
+        $user->sisters = $request->sisters;
+        $user->birthplace = $request->birthplace;
+        $user->address = $request->address;
+        $user->complexion_id = $request->complexion_id;
 
         $user->save();
 
@@ -130,7 +149,7 @@ class UserController extends Controller
     {
         $gallery = Gallery::where('user_id', $userid)->get();
 
-        return view('gallery.index',compact('gallery','userid'));
+        return view('gallery.index', compact('gallery', 'userid'));
     }
 
     public function store(Request $request, $id)
@@ -179,8 +198,8 @@ class UserController extends Controller
             }
 
             $castes = Caste::where('religionid', $religion)
-                            ->where('status', 'show')
-                            ->get(['cid as id', 'name']);
+                ->where('status', 'show')
+                ->get(['cid as id', 'name']);
 
             if ($castes->isEmpty()) {
                 return response()->json([
@@ -216,8 +235,8 @@ class UserController extends Controller
             }
 
             $cities = City::where('state_id', $state)
-                            ->where('status', 'active')
-                            ->get(['cityid as id', 'name']);
+                ->where('status', 'active')
+                ->get(['cityid as id', 'name']);
 
             if ($cities->isEmpty()) {
                 return response()->json([
@@ -238,5 +257,5 @@ class UserController extends Controller
         }
     }
 
-    
+
 }

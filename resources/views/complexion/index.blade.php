@@ -5,8 +5,8 @@
         <div class="col-md-12">
           <div class="card">
             <div class="card-header d-flex justify-content-between">
-              <h4 class="card-title">View Religion</h4>
-              <a href="{{route('religion.create')}}" class="btn btn-info btn-sm">Add Religion</a>
+              <h4 class="card-title">View Complexion</h4>
+              <a href="{{route('complexion.create')}}" class="btn btn-info btn-sm">Add Complexion</a>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -15,18 +15,18 @@
                     <tr>
                       <th>Sr. No.</th>
                       <th>Name</th>
-                      <th>Description</th>
+                      <th>Hindi Name</th>
                       <th>Status</th>
                       <th>Date</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach ($religions as $data)
+                    @foreach ($complexions as $data)
                       <tr>
                         <td>{{$loop->iteration}}</td>
                         <td>{{$data->name}}</td>
-                        <td>{{$data->description}}</td>
+                        <td>{{$data->hindi_name}}</td>
                         <td>
                           <span class="badge badge-{{ $data->status == 'show' ? 'success' : 'danger' }}">
                             {{ ucfirst($data->status) }}
@@ -34,7 +34,7 @@
                         </td>
                         <td>{{$data->created_at}}</td>
                         <td>
-                          <a href="{{route('religion.edit',$data->rid)}}" class="btn btn-primary btn-sm">
+                          <a href="{{route('complexion.edit',$data->id)}}" class="btn btn-primary btn-sm">
                             <span class="btn-label">
                               <i class="fa fa-edit"></i>
                             </span>

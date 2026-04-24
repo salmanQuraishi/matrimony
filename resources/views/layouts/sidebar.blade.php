@@ -49,6 +49,11 @@
                 <div class="collapse" id="Additional">
                   <ul class="nav nav-collapse">
                     <li>
+                      <a href="{{route('complexion.index')}}">
+                        <span class="sub-item">Complexions</span>
+                      </a>
+                    </li>
+                    <li>
                       <a href="{{route('religion.index')}}">
                         <span class="sub-item">Religions</span>
                       </a>

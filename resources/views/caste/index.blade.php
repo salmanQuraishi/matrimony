@@ -13,7 +13,7 @@
                 <table id="basic-datatables" class="display table table-striped table-hover">
                   <thead>
                     <tr>
-                      <th>Id</th>
+                      <th>Sr. No.</th>
                       <th>Religion</th>
                       <th>Name</th>
                       <th>Description</th>

@@ -42,12 +42,16 @@ class MethodController extends Controller
 
     public static function formatUserResponse($user)
     {
-        $user = User::with('profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste','state','city','galleries')->where('id', $user)->first();
+        $user = User::with('complexion','profileFor','education','occupation','annualIncome','jobType','companyType','religion','caste','state','city','galleries')->where('id', $user)->first();
         
         return [
             'id' => $user->id,
             'dummyid' => $user->dummyid ?? null,
             'name' => $user->name ?? null,
+            'father_name' => $user->father_name ?? null,
+            'mother_name' => $user->mother_name ?? null,
+            'brothers' => $user->brothers ?? null,
+            'sisters' => $user->sisters ?? null,
             'email' => $user->email ?? null,
             'mobile' => $user->mobile ?? null,
             'age' => $user->age ?? 0,
@@ -56,6 +60,8 @@ class MethodController extends Controller
             'weight' => $user->weight ?? 0,
             'myself' => $user->myself ?? null,
             'profile' => $user->profile ?? null,
+            'birthplace' => $user->birthplace ?? null,
+            'address' => $user->address ?? null,
             'gender' => $user->gender ?? null,
             'profileFor' => $user->profileFor ?? null,
             'education' => $user->education ?? null,
@@ -68,6 +74,7 @@ class MethodController extends Controller
             'state' => $user->state ?? null,
             'city' => $user->city ?? null,
             'galleries' => $user->galleries ?? null,
+            'complexion' => $user->complexion ?? null,
         ];
     }
     public static function generateUniqueDummyId($prefix = 'WEB', $length = 6)

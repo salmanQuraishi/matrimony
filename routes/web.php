@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ComplexionController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Artisan;
@@ -67,13 +68,19 @@ Route::middleware('auth')->group(function () {
     Route::post('/user/gallery/store/{id}', [UserController::class, 'store'])->name('gallery.store');
     Route::delete('/user/gallery/destroy/{id}', [UserController::class, 'destroy'])->name('gallery.destroy');
 
+    // nikha card
     Route::get('/nikah-card/list/{id}', [NikahCardController::class, 'cardlist'])->name('nikah-card.list');
     Route::get('/nikah-card/generate/{id}', [NikahCardController::class, 'generateCardForm'])->name('nikah-card.form');
     Route::post('/nikah-card/generate/{id}', [NikahCardController::class, 'generate'])->name('nikah-card.generate');
     Route::get('/nikah-card/download/{id}', [NikahCardController::class, 'download'])->name('nikah-card.download');
     Route::delete('/nikah-card/delete/{id}', [NikahCardController::class, 'delete'])->name('nikah-card.delete');
 
-
+    // complexion
+    Route::get('/complexion', [ComplexionController::class, 'index'])->name('complexion.index');
+    Route::get('/complexion/create', [ComplexionController::class, 'create'])->name('complexion.create');
+    Route::post('/complexion/store', [ComplexionController::class, 'store'])->name('complexion.store');
+    Route::get('/complexion/edit/{id}', [ComplexionController::class, 'edit'])->name('complexion.edit');
+    Route::put('/complexion/update/{id}', [ComplexionController::class, 'update'])->name('complexion.update');
 
     // religion
     Route::get('/religion/', [ReligionController::class, 'index'])->name('religion.index');

@@ -6,10 +6,10 @@ use App\Models\User;
 use App\Models\NikahCard;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\NikahCardTemplate;
 use Illuminate\Support\Facades\File;
 use Intervention\Image\Facades\Image;
 use App\Http\Controllers\Api\MethodController;
-use App\Models\NikahCardTemplate;
 
 class NikahCardController extends Controller
 {
@@ -25,27 +25,9 @@ class NikahCardController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // $templates = [
-        //     [
-        //         'function' => 'Template1',
-        //         'name' => 'Template 1',
-        //         'path' => 'nikah-card/template/templete1.png',
-        //     ],
-        //     [
-        //         'function' => 'Template2',
-        //         'name' => 'Template 2',
-        //         'path' => 'nikah-card/template/templete2.png',
-        //     ],
-        //     [
-        //         'function' => 'Template3',
-        //         'name' => 'Template 3',
-        //         'path' => 'nikah-card/template/templete3.png',
-        //     ],
-        // ];
-
         $templates = NikahCardTemplate::where('status', 1)
-        ->orderBy('sort_order', 'asc')
-        ->get();
+            ->orderBy('sort_order', 'asc')
+            ->get();
 
         return view('nikah_cards.generate', compact('user', 'templates'));
     }
@@ -54,8 +36,8 @@ class NikahCardController extends Controller
     {
         $request->validate([
             'template_function' => 'required|string',
-            'template_name'     => 'required|string',
-            'template_path'     => 'required|string',
+            'template_name' => 'required|string',
+            'template_path' => 'required|string',
         ]);
 
         $allowedFunctions = ['Template1', 'Template2', 'Template3'];
@@ -67,14 +49,14 @@ class NikahCardController extends Controller
         if (!in_array($templateFunction, $allowedFunctions)) {
             return response()->json([
                 'status' => false,
-                'message' => 'Invalid template function'
+                'message' => 'Invalid template function',
             ], 422);
         }
 
         if (!$templatePathFromRequest) {
             return response()->json([
                 'status' => false,
-                'message' => 'Please select template'
+                'message' => 'Please select template',
             ], 422);
         }
 
@@ -83,7 +65,7 @@ class NikahCardController extends Controller
         if (!file_exists($template)) {
             return response()->json([
                 'status' => false,
-                'message' => 'Template image not found'
+                'message' => 'Template image not found',
             ], 404);
         }
 
@@ -92,7 +74,7 @@ class NikahCardController extends Controller
         if (!method_exists($this, $templateFunction)) {
             return response()->json([
                 'status' => false,
-                'message' => 'Template method not found'
+                'message' => 'Template method not found',
             ], 404);
         }
 
@@ -109,15 +91,17 @@ class NikahCardController extends Controller
         $img = Image::make($template);
 
         $fontRegular = public_path('fonts/PatrickHand-Regular.ttf');
-        $fontBold    = public_path('fonts/AlexBrush-Regular.ttf');
+        $fontBold = public_path('fonts/AlexBrush-Regular.ttf');
+        $fontHindi = public_path('fonts/NotoSansDevanagari.ttf');
 
         $gold = '#E6C36A';
         $normalTextSize = 28;
 
         $formattedHeight = $this->formatHeight($userData->height ?? null);
-        $dobText = !empty($userData->dob) ? date('d-m-Y', strtotime($userData->dob)) : '';
-        $birthPlace = $userData->city->name ?? '';
-        $religionCaste = trim(($userData->relegion->name ?? '') . ' / ' . ($userData->caste->name ?? ''), ' /');
+        $complexionText = $this->getComplexionText($userData);
+        $dobText = $this->getDobText($userData);
+        $birthPlace = $userData->birthplace ?? '';
+        $religionCaste = $this->getReligionCaste($userData);
         $mobile = !empty($userData->mobile) ? $this->maskMobile($userData->mobile) : '';
         $address = $userData->address ?? 'N/A';
 
@@ -129,17 +113,17 @@ class NikahCardController extends Controller
         $this->fitLeftText($img, $birthPlace, 690, 720, 250, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
         $this->fitLeftText($img, $formattedHeight, 350, 855, 130, $fontRegular, $normalTextSize, $normalTextSize, $gold);
-        $this->fitLeftText($img, $userData->complexion ?? '', 350, 908, 130, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $complexionText, 325, 908, 130, $fontHindi, $normalTextSize, 19, $gold);
         $this->fitLeftText($img, $religionCaste, 340, 965, 200, $fontRegular, $normalTextSize, 18, $gold);
 
         $this->fitLeftText($img, $userData->education->name ?? 'education', 750, 850, 180, $fontRegular, $normalTextSize, $normalTextSize, $gold);
         $this->fitLeftText($img, $userData->occupation->name ?? 'occupation', 750, 933, 180, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
-        $this->fitLeftText($img, $userData->father_name ?? 'Father Name', 345, 1115, 170, $fontRegular, $normalTextSize, 18, $gold);
-        $this->fitLeftText($img, (string)($userData->brothers ?? 'N/A'), 400, 1180, 135, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $userData->father_name ?? 'Father Name', 335, 1115, 170, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $this->getFamilyCount($userData->brothers ?? 0), 400, 1180, 135, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
-        $this->fitLeftText($img, $userData->mother_name ?? 'Mother Name', 780, 1115, 170, $fontRegular, $normalTextSize, 18, $gold);
-        $this->fitLeftText($img, (string)($userData->sisters ?? 'N/A'), 825, 1180, 125, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $userData->mother_name ?? 'Mother Name', 780, 1115, 170, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $this->getFamilyCount($userData->sisters ?? 0), 825, 1180, 125, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
         $this->fitLeftText($img, $mobile, 550, 1265, 290, $fontRegular, $normalTextSize, $normalTextSize, $gold);
         $this->fitLeftText($img, $address, 480, 1325, 350, $fontRegular, 24, 16, $gold);
@@ -152,15 +136,17 @@ class NikahCardController extends Controller
         $img = Image::make($template);
 
         $fontRegular = public_path('fonts/PatrickHand-Regular.ttf');
-        $fontBold    = public_path('fonts/AlexBrush-Regular.ttf');
+        $fontBold = public_path('fonts/AlexBrush-Regular.ttf');
+        $fontHindi = public_path('fonts/NotoSansDevanagari.ttf');
 
         $gold = '#E6C36A';
         $normalTextSize = 28;
 
         $formattedHeight = $this->formatHeight($userData->height ?? null);
-        $dobText = !empty($userData->dob) ? date('d-m-Y', strtotime($userData->dob)) : '';
-        $birthPlace = $userData->city->name ?? '';
-        $religionCaste = trim(($userData->relegion->name ?? '') . ' / ' . ($userData->caste->name ?? ''), ' /');
+        $complexionText = $this->getComplexionText($userData);
+        $dobText = $this->getDobText($userData);
+        $birthPlace = $userData->birthplace ?? '';
+        $religionCaste = $this->getReligionCaste($userData);
         $mobile = !empty($userData->mobile) ? $this->maskMobile($userData->mobile) : '';
         $address = $userData->address ?? 'N/A';
 
@@ -172,17 +158,17 @@ class NikahCardController extends Controller
         $this->fitLeftText($img, $birthPlace, 690, 720, 250, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
         $this->fitLeftText($img, $formattedHeight, 350, 855, 130, $fontRegular, $normalTextSize, $normalTextSize, $gold);
-        $this->fitLeftText($img, $userData->complexion ?? '', 350, 908, 130, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $complexionText, 325, 908, 130, $fontHindi, $normalTextSize, 19, $gold);
         $this->fitLeftText($img, $religionCaste, 340, 965, 200, $fontRegular, $normalTextSize, 18, $gold);
 
         $this->fitLeftText($img, $userData->education->name ?? 'education', 750, 850, 180, $fontRegular, $normalTextSize, $normalTextSize, $gold);
         $this->fitLeftText($img, $userData->occupation->name ?? 'occupation', 750, 933, 180, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
-        $this->fitLeftText($img, $userData->father_name ?? 'Father Name', 345, 1115, 170, $fontRegular, $normalTextSize, 18, $gold);
-        $this->fitLeftText($img, (string)($userData->brothers ?? 'N/A'), 400, 1180, 135, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $userData->father_name ?? 'Father Name', 335, 1115, 170, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $this->getFamilyCount($userData->brothers ?? 0), 400, 1180, 135, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
-        $this->fitLeftText($img, $userData->mother_name ?? 'Mother Name', 780, 1115, 170, $fontRegular, $normalTextSize, 18, $gold);
-        $this->fitLeftText($img, (string)($userData->sisters ?? 'N/A'), 825, 1180, 125, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $userData->mother_name ?? 'Mother Name', 780, 1115, 170, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $this->getFamilyCount($userData->sisters ?? 0), 825, 1180, 125, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
         $this->fitLeftText($img, $mobile, 550, 1265, 290, $fontRegular, $normalTextSize, $normalTextSize, $gold);
         $this->fitLeftText($img, $address, 480, 1325, 350, $fontRegular, 24, 16, $gold);
@@ -195,15 +181,17 @@ class NikahCardController extends Controller
         $img = Image::make($template);
 
         $fontRegular = public_path('fonts/PatrickHand-Regular.ttf');
-        $fontBold    = public_path('fonts/AlexBrush-Regular.ttf');
+        $fontBold = public_path('fonts/AlexBrush-Regular.ttf');
+        $fontHindi = public_path('fonts/NotoSansDevanagari.ttf');
 
         $gold = '#E6C36A';
         $normalTextSize = 28;
 
         $formattedHeight = $this->formatHeight($userData->height ?? null);
-        $dobText = !empty($userData->dob) ? date('d-m-Y', strtotime($userData->dob)) : '';
-        $birthPlace = $userData->city->name ?? '';
-        $religionCaste = trim(($userData->relegion->name ?? '') . ' / ' . ($userData->caste->name ?? ''), ' /');
+        $complexionText = $this->getComplexionText($userData);
+        $dobText = $this->getDobText($userData);
+        $birthPlace = $userData->birthplace ?? '';
+        $religionCaste = $this->getReligionCaste($userData);
         $mobile = !empty($userData->mobile) ? $this->maskMobile($userData->mobile) : '';
         $address = $userData->address ?? 'N/A';
 
@@ -215,17 +203,17 @@ class NikahCardController extends Controller
         $this->fitLeftText($img, $birthPlace, 690, 720, 250, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
         $this->fitLeftText($img, $formattedHeight, 350, 855, 130, $fontRegular, $normalTextSize, $normalTextSize, $gold);
-        $this->fitLeftText($img, $userData->complexion ?? '', 350, 908, 130, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $complexionText, 325, 908, 130, $fontHindi, $normalTextSize, 19, $gold);
         $this->fitLeftText($img, $religionCaste, 340, 965, 200, $fontRegular, $normalTextSize, 18, $gold);
 
         $this->fitLeftText($img, $userData->education->name ?? 'education', 750, 850, 180, $fontRegular, $normalTextSize, $normalTextSize, $gold);
         $this->fitLeftText($img, $userData->occupation->name ?? 'occupation', 750, 933, 180, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
-        $this->fitLeftText($img, $userData->father_name ?? 'Father Name', 345, 1115, 170, $fontRegular, $normalTextSize, 18, $gold);
-        $this->fitLeftText($img, (string)($userData->brothers ?? 'N/A'), 400, 1180, 135, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $userData->father_name ?? 'Father Name', 335, 1115, 170, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $this->getFamilyCount($userData->brothers ?? 0), 400, 1180, 135, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
-        $this->fitLeftText($img, $userData->mother_name ?? 'Mother Name', 780, 1115, 170, $fontRegular, $normalTextSize, 18, $gold);
-        $this->fitLeftText($img, (string)($userData->sisters ?? 'N/A'), 825, 1180, 125, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $userData->mother_name ?? 'Mother Name', 780, 1115, 170, $fontRegular, $normalTextSize, $normalTextSize, $gold);
+        $this->fitLeftText($img, $this->getFamilyCount($userData->sisters ?? 0), 825, 1180, 125, $fontRegular, $normalTextSize, $normalTextSize, $gold);
 
         $this->fitLeftText($img, $mobile, 550, 1265, 290, $fontRegular, $normalTextSize, $normalTextSize, $gold);
         $this->fitLeftText($img, $address, 480, 1325, 350, $fontRegular, 24, 16, $gold);
@@ -233,6 +221,52 @@ class NikahCardController extends Controller
         return $this->saveCard($img, $userData, $templateName, $templatePathFromRequest);
     }
 
+    private function getDobText($userData)
+    {
+        $age = $userData->age ?? null;
+
+        $dob = !empty($userData->dob)
+            ? date('d-m-Y', strtotime($userData->dob))
+            : null;
+
+        $parts = [];
+
+        if ($dob) {
+            $parts[] = $dob;
+        }
+
+        if ($age) {
+            $parts[] = "Age: {$age}";
+        }
+
+        return implode(' | ', $parts);
+    }
+
+    private function getComplexionText($userData)
+    {
+        $complexion1 = $userData->complexion->name ?? null;
+        $complexion2 = $userData->complexion->hindi_name ?? null;
+
+        $complexionText = collect([
+            $complexion1,
+            $complexion2,
+        ])->filter()->implode(' / ');
+
+        return $complexionText ?: 'N/A';
+    }
+
+    private function getReligionCaste($userData)
+    {
+        return trim(
+            ($userData->relegion->name ?? '') . ' / ' . ($userData->caste->name ?? ''),
+            ' /'
+        );
+    }
+
+    private function getFamilyCount($value)
+    {
+        return ($value > 0) ? $value : 'N/A';
+    }
 
     private function saveCard($img, $userData, $templateName, $templatePathFromRequest)
     {
@@ -252,20 +286,20 @@ class NikahCardController extends Controller
 
         $card = NikahCard::updateOrCreate(
             [
-                'user_id'       => $userData->id,
+                'user_id' => $userData->id,
                 'template_name' => $templateName,
             ],
             [
                 'template_path' => $templatePathFromRequest,
-                'card_path'     => $dbPath,
-                'card_name'     => $fileName,
+                'card_path' => $dbPath,
+                'card_name' => $fileName,
             ]
         );
 
         return response()->json([
-            'status'       => true,
-            'message'      => $templateName . ' card generated successfully',
-            'card_id'      => $card->id,
+            'status' => true,
+            'message' => $templateName . ' card generated successfully',
+            'card_id' => $card->id,
             'redirect_url' => route('nikah-card.list', $userData->id),
         ]);
     }
@@ -326,7 +360,7 @@ class NikahCardController extends Controller
 
         return response()->json([
             'status' => true,
-            'message' => 'Card deleted successfully'
+            'message' => 'Card deleted successfully',
         ]);
     }
 

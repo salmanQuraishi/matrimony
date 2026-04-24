@@ -9,6 +9,7 @@ use App\Models\Occupation;
 use App\Models\ProfileType;
 use App\Models\AnnualIncome;
 use App\Models\CompanyType;
+use App\Models\Complexion;
 use App\Models\JobType;
 use App\Models\Notification;
 use App\Models\User;
@@ -18,9 +19,11 @@ class DashboardController extends Controller
     public function index()
     {
         $totalUser = User::where('id','!=',1)->count();
+        
+        $totalComplexion = Complexion::count();
 
         $totalReligion = Religion::count();
-
+        
         $totalCaste = Caste::count();
 
         $totalProfileType = ProfileType::count();
@@ -37,7 +40,7 @@ class DashboardController extends Controller
 
         $TotalNotification = Notification::count();
 
-        $data = compact('totalUser','totalReligion', 'totalCaste','totalProfileType','totalEducation','totalOccupation','TotalAnnualIncome','TotalJobType','TotalCompanyType','TotalNotification');
+        $data = compact('totalUser','totalComplexion','totalReligion', 'totalCaste','totalProfileType','totalEducation','totalOccupation','TotalAnnualIncome','TotalJobType','TotalCompanyType','TotalNotification');
         
         return view('dashboard', $data);
     }

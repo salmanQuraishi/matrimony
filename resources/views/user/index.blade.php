@@ -29,7 +29,7 @@
                   class="table custom-data-table table-striped table-hover align-middle mb-0">
                   <thead>
                     <tr>
-                      <th>Id</th>
+                      <th>Sr. No.</th>
                       <th>Profile</th>
                       <th>Name</th>
                       <th>Mobile</th>
