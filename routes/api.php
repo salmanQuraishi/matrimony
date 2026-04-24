@@ -18,6 +18,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/get/settings', [CommonController::class, 'getSettings']);
+Route::get('/get/complexion/list', [CommonController::class, 'getComplexion']);
 Route::get('/get/religion/list', [CommonController::class, 'getReligion']);
 Route::get('/get/caste/list/{religion}', [CommonController::class, 'getCaste']);
 Route::get('/get/profilefor/list', [CommonController::class, 'getProfileFor']);

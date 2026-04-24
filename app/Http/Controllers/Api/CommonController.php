@@ -17,6 +17,7 @@ use App\Models\Occupation;
 use App\Models\Religion;
 use App\Models\State;
 use App\Models\City;
+use App\Models\Complexion;
 use App\Models\Gallery;
 use App\Models\UserNotification;
 use App\Models\WebSetting;
@@ -34,10 +35,42 @@ class CommonController extends Controller
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }
     }
+    public function getComplexion()
+    {
+        try {
+
+            $complexions = Complexion::where('status', 'show')
+                ->get(['id', 'name', 'hindi_name']);
+
+            if ($complexions->isEmpty()) {
+
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Complexion Data not found',
+                    'data' => []
+                ], 404, [], JSON_UNESCAPED_UNICODE);
+
+            }
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Complexion Data',
+                'data' => $complexions
+            ], 200, [], JSON_UNESCAPED_UNICODE);
+
+        } catch (\Exception $e) {
+
+            return response()->json([
+                'status' => false,
+                'message' => 'An unexpected error occurred.'
+            ], 500, [], JSON_UNESCAPED_UNICODE);
+
+        }
+    }
     public function getReligion()
     {
         try {
-            $Religion = Religion::where('status', 'show')->get(['rid','name','description']);
+            $Religion = Religion::where('status', 'show')->get(['rid', 'name', 'description']);
 
             if ($Religion->isEmpty()) {
                 return MethodController::errorResponse('Religion Data not found', 404);
@@ -55,11 +88,12 @@ class CommonController extends Controller
             $validator = Validator::make(
                 ['religionId' => $religion],
                 ['religionId' => ['required', 'integer', 'exists:religions,rid']]
-            );;
+            );
+            ;
 
             $Caste = Caste::where('religionid', $religion)
-                        ->where('status', 'show')
-                        ->get(['cid', 'name', 'description']);
+                ->where('status', 'show')
+                ->get(['cid', 'name', 'description']);
 
             if ($Caste->isEmpty()) {
                 return MethodController::errorResponse('Caste Data not found', 404);
@@ -76,7 +110,7 @@ class CommonController extends Controller
     public function getProfileFor()
     {
         try {
-            $ProfileType = ProfileType::where('status', 'show')->get(['ptid','name']);
+            $ProfileType = ProfileType::where('status', 'show')->get(['ptid', 'name']);
 
             if ($ProfileType->isEmpty()) {
                 return MethodController::errorResponse('Profile For Data not found', 404);
@@ -91,7 +125,7 @@ class CommonController extends Controller
     public function getEducation()
     {
         try {
-            $Education = Education::where('status', 'show')->get(['eid','name']);
+            $Education = Education::where('status', 'show')->get(['eid', 'name']);
 
             if ($Education->isEmpty()) {
                 return MethodController::errorResponse('Education Data not found', 404);
@@ -106,7 +140,7 @@ class CommonController extends Controller
     public function getOccupation()
     {
         try {
-            $Occupation = Occupation::where('status', 'show')->get(['oid','name']);
+            $Occupation = Occupation::where('status', 'show')->get(['oid', 'name']);
 
             if ($Occupation->isEmpty()) {
                 return MethodController::errorResponse('Occupation Data not found', 404);
@@ -121,7 +155,7 @@ class CommonController extends Controller
     public function getAnnualIncome()
     {
         try {
-            $AnnualIncome = AnnualIncome::where('status', 'show')->get(['aid','range']);
+            $AnnualIncome = AnnualIncome::where('status', 'show')->get(['aid', 'range']);
 
             if ($AnnualIncome->isEmpty()) {
                 return MethodController::errorResponse('Annual Income Data not found', 404);
@@ -136,7 +170,7 @@ class CommonController extends Controller
     public function getJobType()
     {
         try {
-            $JobType = JobType::where('status', 'show')->get(['jtid','name']);
+            $JobType = JobType::where('status', 'show')->get(['jtid', 'name']);
 
             if ($JobType->isEmpty()) {
                 return MethodController::errorResponse('Job Type Data not found', 404);
@@ -151,7 +185,7 @@ class CommonController extends Controller
     public function getCompanyType()
     {
         try {
-            $CompanyType = CompanyType::where('status', 'show')->get(['ctid','name']);
+            $CompanyType = CompanyType::where('status', 'show')->get(['ctid', 'name']);
 
             if ($CompanyType->isEmpty()) {
                 return MethodController::errorResponse('Company Type Data not found', 404);
@@ -166,7 +200,7 @@ class CommonController extends Controller
     public function getState()
     {
         try {
-            $State = State::where('status', 'Active')->get(['sid','name']);
+            $State = State::where('status', 'Active')->get(['sid', 'name']);
 
             if ($State->isEmpty()) {
                 return MethodController::errorResponse('State Data not found', 404);
@@ -184,7 +218,8 @@ class CommonController extends Controller
             $validator = Validator::make(
                 ['state' => $state],
                 ['state' => ['required', 'integer', 'exists:state,sid']]
-            );;
+            );
+            ;
             $Caste = City::where('state_id', $state)
                 ->where('status', 'Active')
                 ->orderBy('name', 'asc')
@@ -206,7 +241,7 @@ class CommonController extends Controller
     {
         try {
             UserNotification::create([
-                'sender_id'   => $senderId,
+                'sender_id' => $senderId,
                 'receiver_id' => $receiverId,
                 'title' => $title,
                 'body' => $body,
@@ -225,7 +260,7 @@ class CommonController extends Controller
         $userId = auth()->id();
 
         try {
-            
+
             $notifications = UserNotification::with('sender')
                 ->where('receiver_id', $userId)
                 ->orderBy('created_at', 'desc')
@@ -248,11 +283,11 @@ class CommonController extends Controller
     public function UserNotificationRead(Request $request)
     {
         $userId = auth()->id();
-        
+
         try {
             $updated = UserNotification::where('receiver_id', $userId)
-            ->where('is_read', false)
-            ->update(['is_read' => true]);
+                ->where('is_read', false)
+                ->update(['is_read' => true]);
 
             if ($updated === 0) {
                 return MethodController::errorResponse('No unread notifications found.');
