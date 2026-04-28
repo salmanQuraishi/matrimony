@@ -183,7 +183,7 @@ class AuthController extends Controller
                 'gender' => 'required|in:male,female,other',
                 'address' => 'nullable|string|max:500',
                 'birthplace' => 'required|string|max:255',
-                'complexion_id' => 'required|exists:complexions,id',
+                'complexion' => 'required|exists:complexions,id',
                 'father_name' => 'required|string|max:255',
                 'mother_name' => 'required|string|max:255',
                 'brothers' => 'nullable|integer|min:0',
@@ -196,7 +196,7 @@ class AuthController extends Controller
             $user->gender = $request->gender;
             $user->address = $request->address;
             $user->birthplace = $request->birthplace;
-            $user->complexion_id = $request->complexion_id;
+            $user->complexion_id = $request->complexion;
             $user->father_name = $request->father_name;
             $user->mother_name = $request->mother_name;
             $user->brothers = $request->brothers ?? 0;
