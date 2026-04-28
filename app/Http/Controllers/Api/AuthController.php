@@ -177,7 +177,7 @@ class AuthController extends Controller
             $user = $request->user();
 
             $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'nullable|string|max:255',
                 'dob' => 'required|date',
                 'age' => 'required|integer|min:0',
                 'email' => 'required|email|unique:users,email,' . $user->id,
