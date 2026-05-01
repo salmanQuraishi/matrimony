@@ -31,9 +31,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/clear-cache', function () {
         Cache::forget('websetting');
 
-        Artisan::call('config:cache');
-        Artisan::call('view:clear');
-        Artisan::call('route:cache');
+        Artisan::call('optimize:clear');
 
         return redirect()->back()->with('success', 'Cache cleared successfully!');
     })->name('cache.clear');
