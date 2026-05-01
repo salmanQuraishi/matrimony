@@ -11,6 +11,10 @@ class MethodController extends Controller
     {
         return $users->map(function ($user) {
             return [
+                'father_name' => $user->father_name ?? null,
+                'mother_name' => $user->mother_name ?? null,
+                'brothers' => $user->brothers ?? null,
+                'sisters' => $user->sisters ?? null,
                 'likes' => $user->likedBy()->count(),
                 'is_liked' => $user->is_liked ?? 0,
                 'id' => $user->id,
@@ -36,6 +40,7 @@ class MethodController extends Controller
                 'state' => $user->state ?? null,
                 'city' => $user->city ?? null,
                 'galleries' => $user->galleries ?? null,
+                'complexion' => $user->complexion ?? null,
             ];
         })->values();
     }
