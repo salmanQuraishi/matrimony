@@ -129,7 +129,7 @@ class MethodController extends Controller
         $filledFields = 0;
 
         foreach ($fields as $field) {
-            if (!empty($user->$field)) {
+            if ($user->$field !== null && $user->$field !== '') {
                 $filledFields++;
             }
         }
