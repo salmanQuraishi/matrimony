@@ -42,7 +42,7 @@ class CommonController extends Controller
             // $complexions = Complexion::where('status', 'show')
             //     ->get(['id', 'name', 'hindi_name']);
 
-            $Complexions = Complexion::where('status', 'show')
+            $complexions = Complexion::where('status', 'show')
             ->select('id', 'name', 'hindi_name')
             ->get()
             ->map(function ($item) {
@@ -50,7 +50,7 @@ class CommonController extends Controller
                 return $item;
             });
 
-            if ($Complexions->isEmpty()) {
+            if ($complexions->isEmpty()) {
 
                 return response()->json([
                     'status' => false,
