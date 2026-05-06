@@ -39,10 +39,18 @@ class CommonController extends Controller
     {
         try {
 
-            $complexions = Complexion::where('status', 'show')
-                ->get(['id', 'name', 'hindi_name']);
+            // $complexions = Complexion::where('status', 'show')
+            //     ->get(['id', 'name', 'hindi_name']);
 
-            if ($complexions->isEmpty()) {
+            $Complexions = Complexion::where('status', 'show')
+            ->select('id', 'name', 'hindi_name')
+            ->get()
+            ->map(function ($item) {
+                $item->name = $item->name . ' (' . $item->hindi_name . ')';
+                return $item;
+            });
+
+            if ($Complexions->isEmpty()) {
 
                 return response()->json([
                     'status' => false,
