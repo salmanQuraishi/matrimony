@@ -23,7 +23,7 @@ class CasteController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'religion_id' => 'required',
+            'religionid' => 'required',
             'name' => 'required|string|min:1|max:50|unique:castes,name',
             'description' => 'nullable|string|max:1000',
             'status' => 'required|string|in:show,hide'
@@ -44,7 +44,7 @@ class CasteController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'religion_id' => 'required',
+            'religionid' => 'required',
             'name' => 'required|string|min:1|max:50|unique:castes,name,' . $id . ',cid',
             'description' => 'nullable|string|max:1000',
             'status' => 'required|string|in:show,hide',

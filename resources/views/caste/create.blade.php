@@ -16,9 +16,9 @@
                     <x-form-select 
                       label="Choose a Religion" 
                       id="religionSelect" 
-                      name="religion_id" 
+                      name="religionid" 
                       :options="$religions"
-                      :selected="old('religion_id')" 
+                      :selected="old('religionid')" 
                     />
                     <x-form-input
                       type="text"
