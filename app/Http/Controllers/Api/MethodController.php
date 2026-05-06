@@ -109,6 +109,8 @@ class MethodController extends Controller
             'name',
             'father_name',
             'mother_name',
+            'brothers',
+            'sisters',
             'dummyid',
             'email',
             'mobile',

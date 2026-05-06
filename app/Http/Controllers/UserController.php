@@ -62,7 +62,11 @@ class UserController extends Controller
 
         $Complexions = Complexion::where('status', 'show')
             ->select('id', 'name', 'hindi_name')
-            ->get();
+            ->get()
+            ->map(function ($item) {
+                $item->label = $item->name . ' (' . $item->hindi_name . ')';
+                return $item;
+            });
 
         $user = User::findOrFail($id);
         return view('user.view', compact('user', 'religions', 'States', 'ProfileTypes', 'CompanyType', 'JobType', 'AnnualIncome', 'Occupation', 'Education', 'Complexions'));
