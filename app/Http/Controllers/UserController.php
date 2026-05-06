@@ -64,7 +64,7 @@ class UserController extends Controller
             ->select('id', 'name', 'hindi_name')
             ->get()
             ->map(function ($item) {
-                $item->label = $item->name . ' (' . $item->hindi_name . ')';
+                $item->name = $item->name . ' (' . $item->hindi_name . ')';
                 return $item;
             });
 
