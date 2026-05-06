@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\MethodController;
 use App\Models\Gallery;
 use App\Models\Interest;
 use App\Models\InterestNot;
+use Intervention\Image\Facades\Image;
 
 class AuthController extends Controller
 {
@@ -57,7 +58,7 @@ class AuthController extends Controller
                 'token' => $token,
                 'user' => [
                     'dummyid' => $user->dummyid,
-                    'name'  => $user->name,
+                    'name' => $user->name,
                     'mobile' => $user->mobile,
                 ],
             ]);
@@ -99,7 +100,7 @@ class AuthController extends Controller
 
         $user = User::where('mobile', $mobile)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
             RateLimiter::hit($throttleKey, 60);
             return response()->json([
                 'status' => false,
@@ -127,7 +128,7 @@ class AuthController extends Controller
             'token' => $token,
             'user' => [
                 'dummyid' => $user->dummyid,
-                'name'  => $user->name,
+                'name' => $user->name,
                 'mobile' => $user->mobile,
             ],
         ]);
@@ -156,7 +157,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'Password changed successfully.',
-            ],200);
+            ], 200);
 
         } catch (ValidationException $e) {
             return response()->json([
@@ -263,8 +264,8 @@ class AuthController extends Controller
             $request->validate([
                 'height' => ['required', 'numeric', 'min:0'],
                 'weight' => ['required', 'numeric', 'min:0'],
-                'state' => ['required','integer','exists:state,sid'],                
-                'city' => ['required','integer','exists:city,cityid'],
+                'state' => ['required', 'integer', 'exists:state,sid'],
+                'city' => ['required', 'integer', 'exists:city,cityid'],
             ]);
 
             $user = $request->user();
@@ -305,15 +306,15 @@ class AuthController extends Controller
 
             $user = $request->user();
 
-            $user->education_id       = $validated['education'];
-            $user->job_type_id        = $validated['jobtype'];
-            $user->company_type_id    = $validated['companytype'];
-            $user->occupation_id      = $validated['occupation'];
-            $user->annual_income_id   = $validated['annualincome'];
+            $user->education_id = $validated['education'];
+            $user->job_type_id = $validated['jobtype'];
+            $user->company_type_id = $validated['companytype'];
+            $user->occupation_id = $validated['occupation'];
+            $user->annual_income_id = $validated['annualincome'];
             $user->save();
 
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'Professional details updated successfully.',
             ], 200);
 
@@ -326,7 +327,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'error'  => 'An unexpected error occurred.',
+                'error' => 'An unexpected error occurred.',
             ], 500);
         }
     }
@@ -346,22 +347,22 @@ class AuthController extends Controller
             $profile = $user->profile;
 
             $user->myself = $validated['myself'];
-            if($request->images){
+            if ($request->images) {
 
                 if (!empty($profile) && file_exists(public_path($profile))) {
                     unlink(public_path($profile));
                 }
 
-                $img = "profile/".rand(99999,9999999).time().'.'.$request->images->extension(); 
+                $img = "profile/" . rand(99999, 9999999) . time() . '.' . $request->images->extension();
                 $request->images->move(public_path('profile/'), $img);
                 $user->profile = $img;
-            }else{
+            } else {
                 $user->profile = $profile;
             }
             $user->save();
 
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'Profile details updated successfully.',
             ], 200);
 
@@ -374,7 +375,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'error'  => 'An unexpected error occurred.',
+                'error' => 'An unexpected error occurred.',
             ], 500);
         }
     }
@@ -390,23 +391,31 @@ class AuthController extends Controller
 
             $userId = $request->user()->id;
 
-            // print_r($request->images);
-            // return;
-
             if (!empty($request->images)) {
                 foreach ($request->images as $image) {
-                    $imgName = "profile/" . rand(99999, 9999999) . time() . '.' . $image->extension(); 
-                    $image->move(public_path('profile/'), $imgName);
+
+                    $imgName = rand(99999, 9999999) . time() . '.jpg';
+                    $path = public_path('profile/' . $imgName);
+
+                    // Image compress & resize
+                    $img = Image::make($image)
+                        ->resize(800, null, function ($constraint) {
+                            $constraint->aspectRatio();
+                            $constraint->upsize();
+                        })
+                        ->encode('jpg', 70); // quality 70%
+
+                    $img->save($path);
 
                     Gallery::create([
-                        'user_id'    => $userId,
-                        'image_path' => $imgName,
+                        'user_id' => $userId,
+                        'image_path' => "profile/" . $imgName,
                     ]);
                 }
             }
 
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'Gallery updated successfully.',
             ], 200);
 
@@ -419,7 +428,7 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'error'  => 'An unexpected error occurred.',
+                'error' => 'An unexpected error occurred.',
             ], 500);
         }
     }
@@ -438,7 +447,7 @@ class AuthController extends Controller
             }
 
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'User Data',
                 'user' => MethodController::formatUserResponse($user->id),
             ], 200);
@@ -452,30 +461,30 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'status' => false,
-                'error'  => 'An unexpected error occurred.',
+                'error' => 'An unexpected error occurred.',
             ], 500);
         }
     }
     public function Home()
     {
-        try { 
+        try {
             $user = auth()->user();
             if (!$user) {
                 return response()->json([
-                    'status'  => false,
+                    'status' => false,
                     'message' => 'Unauthorized',
                 ], 401);
             }
 
             $unread_notification = CommonController::getUserNotificationCount($user->id);
 
-            $likesCount           = $user->likedBy()->count();
-            $sendRequestCount     = Interest::where('sender_id', $user->id)->count();
+            $likesCount = $user->likedBy()->count();
+            $sendRequestCount = Interest::where('sender_id', $user->id)->count();
             $receivedRequestCount = Interest::where('receiver_id', $user->id)->count();
-            $notInterestedCount   = InterestNot::where('user_id', $user->id)->count();
-            
+            $notInterestedCount = InterestNot::where('user_id', $user->id)->count();
+
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'User Dashboard',
                 'data' => [
                     'unread_notification' => $unread_notification,
@@ -488,8 +497,8 @@ class AuthController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'status'  => false,
-                'error'   => 'An unexpected error occurred.',
+                'status' => false,
+                'error' => 'An unexpected error occurred.',
                 'message' => $e->getMessage(),
             ], 500);
         }
@@ -503,7 +512,7 @@ class AuthController extends Controller
             $user->currentAccessToken()->delete();
 
             return response()->json([
-                'status'  => true,
+                'status' => true,
                 'message' => 'Logged out'
             ], 200);
         }
