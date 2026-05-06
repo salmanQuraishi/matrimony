@@ -338,27 +338,35 @@ class AuthController extends Controller
 
             $validated = $request->validate([
                 'myself' => 'required|string|min:20|max:100',
-                'images' => 'nullable',
-                'images.*' => 'image|mimes:jpg,jpeg,png,webp,svg|max:2048',
+                'images' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             ]);
 
             $user = $request->user();
-
             $profile = $user->profile;
 
             $user->myself = $validated['myself'];
-            if ($request->images) {
+
+            if ($request->hasFile('images')) {
 
                 if (!empty($profile) && file_exists(public_path($profile))) {
                     unlink(public_path($profile));
                 }
 
-                $img = "profile/" . rand(99999, 9999999) . time() . '.' . $request->images->extension();
-                $request->images->move(public_path('profile/'), $img);
-                $user->profile = $img;
-            } else {
-                $user->profile = $profile;
+                $imgName = rand(99999, 9999999) . time() . '.jpg';
+                $path = public_path('profile/' . $imgName);
+
+                $img = Image::make($request->images)
+                    ->resize(600, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    })
+                    ->encode('jpg', 70);
+
+                $img->save($path);
+
+                $user->profile = "profile/" . $imgName;
             }
+
             $user->save();
 
             return response()->json([
@@ -397,13 +405,12 @@ class AuthController extends Controller
                     $imgName = rand(99999, 9999999) . time() . '.jpg';
                     $path = public_path('profile/' . $imgName);
 
-                    // Image compress & resize
                     $img = Image::make($image)
                         ->resize(800, null, function ($constraint) {
                             $constraint->aspectRatio();
                             $constraint->upsize();
                         })
-                        ->encode('jpg', 70); // quality 70%
+                        ->encode('jpg', 70);
 
                     $img->save($path);
 
