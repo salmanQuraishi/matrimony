@@ -403,7 +403,7 @@ class AuthController extends Controller
                 foreach ($request->images as $image) {
 
                     $imgName = rand(99999, 9999999) . time() . '.jpg';
-                    $path = public_path('profile/' . $imgName);
+                    $path = public_path('gallery/' . $imgName);
 
                     $img = Image::make($image)
                         ->resize(800, null, function ($constraint) {
@@ -416,7 +416,7 @@ class AuthController extends Controller
 
                     Gallery::create([
                         'user_id' => $userId,
-                        'image_path' => "profile/" . $imgName,
+                        'image_path' => "gallery/" . $imgName,
                     ]);
                 }
             }

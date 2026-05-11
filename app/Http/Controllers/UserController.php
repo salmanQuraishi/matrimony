@@ -103,7 +103,7 @@ class UserController extends Controller
             'brothers' => 'nullable|integer|min:0',
             'sisters' => 'nullable|integer|min:0',
             'birthplace' => 'required|string|max:255',
-            'address' => 'required|string|max:500',
+            'address' => 'nullable|string|max:500',
             'complexion_id' => 'nullable|exists:castes,cid',
         ]);
 
@@ -166,17 +166,17 @@ class UserController extends Controller
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $imageName = time() . rand(1000, 9999) . '.' . $image->extension();
-
-                $image->move(public_path('uploads/gallery'), $imageName);
+ 
+                $image->move(public_path('gallery'), $imageName);
 
                 Gallery::create([
                     'user_id' => $id,
-                    'image_path' => 'uploads/gallery/' . $imageName,
+                    'image_path' => 'gallery/' . $imageName,
                 ]);
             }
         }
 
-        return back()->with('success', 'Images uploaded successfully');
+        return back()->with('success', 'Gallery uploaded successfully');
     }
 
     public function destroy($id)
