@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Intervention\Image\Facades\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
@@ -107,14 +108,25 @@ class UserController extends Controller
             'complexion_id' => 'nullable|exists:castes,cid',
         ]);
 
-        if ($request->profile_image) {
-            $profile = $user->profile;
+        if ($request->hasFile('profile_image')) {
+
             if (!empty($profile) && file_exists(public_path($profile))) {
                 unlink(public_path($profile));
             }
-            $imgName = rand(99999, 9999999) . time() . '.' . $request->profile_image->extension();
-            $request->profile_image->move(public_path('profile'), $imgName);
-            $user->profile = 'profile/' . $imgName;
+
+            $imgName = rand(99999, 9999999) . time() . '.jpg';
+            $path = public_path('profile/' . $imgName);
+
+            $img = Image::make($request->profile_image)
+                ->resize(600, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                })
+                ->encode('jpg', 70);
+
+            $img->save($path);
+
+            $user->profile = "profile/" . $imgName;
         }
 
         $user->profile_for = $request->input('profile_for');
@@ -165,13 +177,22 @@ class UserController extends Controller
 
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
-                $imageName = time() . rand(1000, 9999) . '.' . $image->extension();
- 
-                $image->move(public_path('gallery'), $imageName);
+
+                $imgName = rand(99999, 9999999) . time() . '.jpg';
+                $path = public_path('gallery/' . $imgName);
+
+                $img = Image::make($image)
+                    ->resize(800, null, function ($constraint) {
+                        $constraint->aspectRatio();
+                        $constraint->upsize();
+                    })
+                    ->encode('jpg', 70);
+
+                $img->save($path);
 
                 Gallery::create([
                     'user_id' => $id,
-                    'image_path' => 'gallery/' . $imageName,
+                    'image_path' => 'gallery/' . $imgName,
                 ]);
             }
         }
