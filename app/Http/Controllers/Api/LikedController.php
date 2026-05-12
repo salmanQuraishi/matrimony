@@ -36,24 +36,40 @@ class LikedController extends Controller
         $alreadyLiked = $liker->likes()->where('liked_id', $likedId)->exists();
 
         if ($alreadyLiked) {
+
             $liker->likes()->detach($likedId);
 
             UserNotification::where('sender_id', $liker->id)
-            ->where('receiver_id', $likedId)
-            ->where('title', 'Someone Likes You!')
-            ->delete();
+                ->where('receiver_id', $likedId)
+                ->where('title', 'Someone Likes You!')
+                ->delete();
 
             return MethodController::successResponse('User unliked successfully', $likedId);
+
         } else {
+
             $liker->likes()->attach($likedId);
 
-            $deviceToken = $liker->fcm_token ?? null;
+            // liked user fetch karo
+            $likedUser = User::find($likedId);
+
+            // liked user ka token
+            $deviceToken = $likedUser->fcm_token ?? null;
+
             $title = 'Someone Likes You!';
             $body = $liker->name . ' has liked your profile.';
 
-            $response = $this->firebaseNotificationService->sendNotification($deviceToken, $title, $body);
+            // notification send
+            $response = $this->firebaseNotificationService
+                ->sendNotification($deviceToken, $title, $body);
 
-            CommonController::UserNotificationStore($liker->id,$likedId, $title, $body, false);
+            CommonController::UserNotificationStore(
+                $liker->id,
+                $likedId,
+                $title,
+                $body,
+                false
+            );
 
             return MethodController::successResponse('User liked successfully', $likedId);
         }
