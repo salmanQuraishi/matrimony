@@ -50,16 +50,13 @@ class LikedController extends Controller
 
             $liker->likes()->attach($likedId);
 
-            // liked user fetch karo
             $likedUser = User::find($likedId);
 
-            // liked user ka token
             $deviceToken = $likedUser->fcm_token ?? null;
 
             $title = 'Someone Likes You!';
             $body = $liker->name . ' has liked your profile.';
 
-            // notification send
             $response = $this->firebaseNotificationService
                 ->sendNotification($deviceToken, $title, $body);
 

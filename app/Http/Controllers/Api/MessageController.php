@@ -76,7 +76,7 @@ class MessageController extends Controller
         return response()->json($messages);
     }
 
-    public function store(Request $request)
+    public function storeold(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -103,6 +103,41 @@ class MessageController extends Controller
         } catch (\Exception $e) {
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }
+    }
+
+    public function store(Request $request)
+    {
+    try {
+
+        $validator = Validator::make($request->all(), [
+            'receiver_id' => 'required|exists:users,id',
+            'message' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return MethodController::errorResponse($validator->errors()->first(), 422);
+        }
+
+        $sender = Auth::user();
+
+        $message = Message::create([
+            'sender_id'   => $sender->id,
+            'receiver_id' => $request->receiver_id,
+            'message'     => $request->message,
+        ]);
+
+        // event(new Chat($sender->name, $request->message));
+
+        return MethodController::successResponse(
+            'Message sent successfully',
+            $message
+        );
+
+    } catch (\Exception $e) {
+
+        return MethodController::errorResponse($e->getMessage(), 500);
+
+    }
     }
 
     public function markAsRead($id)
