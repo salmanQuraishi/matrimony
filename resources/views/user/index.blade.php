@@ -58,10 +58,10 @@
 
                         <td class="text-center">
                           <div class="table-action-group">
-                            <a href="{{ route('chat.index', encrypt($data->id)) }}"
+                            {{-- <a href="{{ route('chat.index', encrypt($data->id)) }}"
                               class="btn btn-warning btn-sm icon-btn" title="Chat">
                               <i class="fab fa-rocketchat"></i>
-                            </a>
+                            </a> --}}
 
                             <a href="{{ route('user.view', $data->id) }}" class="btn btn-info btn-sm icon-btn"
                               title="View">

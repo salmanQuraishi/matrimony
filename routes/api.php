@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\LikedController;
 use App\Http\Controllers\Api\MatchController;
 use App\Http\Controllers\Api\InterestnotController;
 use App\Http\Controllers\Api\MessageController;
+use App\Http\Controllers\Api\SearchController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -52,6 +53,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/get/matches/details/{user}', [MatchController::class, 'getRelevantUserDetails']);
 
     Route::post('/update/like-user', [LikedController::class, 'likeUser']);
+    
+    Route::get('/search/users', [SearchController::class, 'searchUsers']);
 
     Route::post('/interests/send/{receiver}', [InterestController::class, 'sendInterest']);
     Route::post('/interests/accept/{interest}', [InterestController::class, 'acceptInterest']);
