@@ -1,3 +1,93 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --gold: #C9A84C;
+        --gold-light: #E8D08A;
+        --gold-dark: #8B6914;
+        --deep-green: #0D3B2E;
+        --mid-green: #1A5C45;
+        --light-green: #2E8B57;
+        --cream: #FBF6EC;
+        --cream-dark: #F0E8D0;
+        --white: #FFFFFF;
+        --text-dark: #1A1208;
+        --text-mid: #4A3728;
+        --shadow: rgba(13, 59, 46, 0.15);
+    }
+
+    body {
+        font-family: 'Outfit', 'Inter', sans-serif;
+        background: var(--cream);
+        color: var(--text-dark);
+    }
+
+    .font-cormorant {
+        font-family: 'Cormorant Garamond', serif;
+    }
+}
+
+@layer utilities {
+    /* Arabesque backgrounds */
+    .arabesque-bg {
+        background-image:
+            radial-gradient(circle at 20% 50%, rgba(201, 168, 76, 0.07) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(13, 59, 46, 0.05) 0%, transparent 40%),
+            url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cpath d='M30 5 L55 30 L30 55 L5 30Z' fill='%23C9A84C' fill-opacity='0.05'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-bg-custom {
+        background: linear-gradient(155deg, #0D3B2E 0%, #091f19 55%, #060f0b 100%);
+        position: relative;
+    }
+
+    .hero-bg-custom::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23C9A84C' fill-opacity='0.04'%3E%3Cpath d='M40 5 C40 5 75 40 40 75 C5 40 40 5 40 5Z'/%3E%3Cpath d='M5 40 C5 40 40 5 75 40 C40 75 5 40 5 40Z'/%3E%3C/g%3E%3C/svg%3E");
+        animation: bgShift 25s linear infinite;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    @keyframes bgShift {
+        0% {
+            background-position: 0 0;
+        }
+        100% {
+            background-position: 80px 80px;
+        }
+    }
+    /* App section mockup and button styles */
+    .app-section {
+        background: var(--cream-dark);
+    }
+
+    .phone-mockup {
+        width: 210px;
+        height: 420px;
+        background: linear-gradient(160deg, var(--deep-green), #091f19);
+        border-radius: 36px;
+        border: 2.5px solid var(--gold);
+        box-shadow: 0 24px 60px rgba(13, 59, 46, 0.4), 0 0 0 6px rgba(201, 168, 76, 0.12);
+        padding: 22px 14px 18px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        animation: phoneFloat 4s ease-in-out infinite;
+    }
+
+    @keyframes phoneFloat {
+        0%, 100% {
+            transform: translateY(0) rotate(-1deg);
+        }
+        50% {
+            transform: translateY(-14px) rotate(1deg);
+        }
+    }
+}

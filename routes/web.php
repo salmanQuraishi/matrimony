@@ -140,3 +140,76 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+// ==========================================
+// MATRIMONY WEBSITE FRONTEND ROUTES
+// ==========================================
+
+// Public Frontend Routes
+Route::get('/', [\App\Http\Controllers\Frontend\HomeController::class, 'home'])->name('home');
+Route::get('/about', [\App\Http\Controllers\Frontend\HomeController::class, 'about'])->name('about');
+Route::get('/contact', [\App\Http\Controllers\Frontend\HomeController::class, 'contact'])->name('contact');
+Route::get('/privacy-policy', [\App\Http\Controllers\Frontend\HomeController::class, 'privacy'])->name('privacy');
+Route::get('/terms-conditions', [\App\Http\Controllers\Frontend\HomeController::class, 'terms'])->name('terms');
+Route::get('/success-stories', [\App\Http\Controllers\Frontend\HomeController::class, 'successStories'])->name('success-stories');
+
+// Dynamic Select Bindings (AJAX)
+Route::get('/ajax/castes/{religion}', [\App\Http\Controllers\Frontend\HomeController::class, 'getCastes'])->name('ajax.castes');
+Route::get('/ajax/cities/{state}', [\App\Http\Controllers\Frontend\HomeController::class, 'getCities'])->name('ajax.cities');
+
+// User Auth Routes (Guests only)
+Route::middleware('guest')->group(function () {
+    Route::get('/user/login', [\App\Http\Controllers\Frontend\AuthController::class, 'showLogin'])->name('user.login');
+    Route::post('/user/login', [\App\Http\Controllers\Frontend\AuthController::class, 'login'])->name('user.login.post');
+    Route::get('/user/register', [\App\Http\Controllers\Frontend\AuthController::class, 'showRegister'])->name('user.register');
+    Route::post('/user/register', [\App\Http\Controllers\Frontend\AuthController::class, 'register'])->name('user.register.post');
+});
+
+// Authenticated User Routes (Protected by user.auth middleware)
+Route::middleware('user.auth')->group(function () {
+    Route::post('/user/logout', [\App\Http\Controllers\Frontend\AuthController::class, 'logout'])->name('user.logout');
+    Route::post('/user/settings/change-password', [\App\Http\Controllers\Frontend\AuthController::class, 'changePassword'])->name('user.change-password');
+
+    Route::get('/user/dashboard', [\App\Http\Controllers\Frontend\DashboardController::class, 'index'])->name('user.dashboard');
+
+    // My Profile
+    Route::get('/user/my-profile', [\App\Http\Controllers\Frontend\ProfileController::class, 'show'])->name('user.profile');
+    Route::get('/user/my-profile/edit', [\App\Http\Controllers\Frontend\ProfileController::class, 'edit'])->name('user.profile.edit');
+    Route::post('/user/my-profile/update-basic', [\App\Http\Controllers\Frontend\ProfileController::class, 'updateBasic'])->name('user.profile.update-basic');
+    Route::post('/user/my-profile/update-religion', [\App\Http\Controllers\Frontend\ProfileController::class, 'updateReligion'])->name('user.profile.update-religion');
+    Route::post('/user/my-profile/update-personal', [\App\Http\Controllers\Frontend\ProfileController::class, 'updatePersonal'])->name('user.profile.update-personal');
+    Route::post('/user/my-profile/update-professional', [\App\Http\Controllers\Frontend\ProfileController::class, 'updateProfessional'])->name('user.profile.update-professional');
+    Route::post('/user/my-profile/update-about', [\App\Http\Controllers\Frontend\ProfileController::class, 'updateAbout'])->name('user.profile.update-about');
+    Route::post('/user/my-profile/update-gallery', [\App\Http\Controllers\Frontend\ProfileController::class, 'updateGallery'])->name('user.profile.update-gallery');
+
+    // Matches & Search
+    Route::get('/user/matches', [\App\Http\Controllers\Frontend\MatchController::class, 'index'])->name('user.matches');
+    Route::get('/user/profile/{id}', [\App\Http\Controllers\Frontend\MatchController::class, 'show'])->name('user.profile.view');
+    Route::get('/user/search', [\App\Http\Controllers\Frontend\MatchController::class, 'search'])->name('user.search');
+
+    // Interests / Match Requests
+    Route::get('/user/interests', [\App\Http\Controllers\Frontend\InterestController::class, 'index'])->name('user.interests');
+    Route::post('/user/interests/send/{receiver}', [\App\Http\Controllers\Frontend\InterestController::class, 'send'])->name('user.interests.send');
+    Route::post('/user/interests/accept/{interest}', [\App\Http\Controllers\Frontend\InterestController::class, 'accept'])->name('user.interests.accept');
+    Route::post('/user/interests/reject/{interest}', [\App\Http\Controllers\Frontend\InterestController::class, 'reject'])->name('user.interests.reject');
+    Route::post('/user/interests/revoke/{interest}', [\App\Http\Controllers\Frontend\InterestController::class, 'revoke'])->name('user.interests.revoke');
+    Route::post('/user/interests/ignore/{receiver}', [\App\Http\Controllers\Frontend\InterestController::class, 'ignore'])->name('user.interests.ignore');
+    Route::post('/user/interests/ignore/revoke/{ignored}', [\App\Http\Controllers\Frontend\InterestController::class, 'revokeIgnore'])->name('user.interests.ignore.revoke');
+
+    // Shortlist / Likes
+    Route::get('/user/shortlist', [\App\Http\Controllers\Frontend\ShortlistController::class, 'index'])->name('user.shortlist');
+    Route::post('/user/shortlist/toggle/{likedId}', [\App\Http\Controllers\Frontend\ShortlistController::class, 'toggle'])->name('user.shortlist.toggle');
+
+    // Chat / Messages
+    Route::get('/user/messages', [\App\Http\Controllers\Frontend\MessageController::class, 'index'])->name('user.messages');
+    Route::post('/user/messages/store', [\App\Http\Controllers\Frontend\MessageController::class, 'store'])->name('user.messages.store');
+
+    // Notifications
+    Route::get('/user/notifications', [\App\Http\Controllers\Frontend\NotificationController::class, 'index'])->name('user.notifications');
+    Route::post('/user/notifications/read', [\App\Http\Controllers\Frontend\NotificationController::class, 'markAsRead'])->name('user.notifications.read');
+
+    // Settings
+    Route::get('/user/settings', function () {
+        return view('frontend.user.settings');
+    })->name('user.settings');
+});

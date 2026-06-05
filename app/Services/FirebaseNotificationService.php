@@ -56,8 +56,12 @@ class FirebaseNotificationService
         throw new Exception('Failed to obtain access token: ' . $response->body());
     }
 
-    public function sendNotification(String $fcmToken, String $title, String $body)
+    public function sendNotification(?string $fcmToken, string $title, string $body)
     {
+        if (empty($fcmToken)) {
+            return ['status' => false, 'message' => 'FCM Token is empty'];
+        }
+
         try {
             $keyFilePath = storage_path('app/firebase/firebase_credentials.json');
             $scopes = ['https://www.googleapis.com/auth/firebase.messaging'];

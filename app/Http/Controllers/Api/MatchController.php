@@ -16,6 +16,12 @@ class MatchController extends Controller
     {
         $user = Auth::user();
 
+        $profileCompletion = MethodController::profileCompletion($user->id);
+
+        if($profileCompletion < 50) {
+            return MethodController::errorResponse('Please complete your profile at least 50% to view matches.', 403);
+        }
+
         $sentInterestUserIds = DB::table('interests')
         ->where(function($query) use ($user) {
             $query->where('sender_id', $user->id)
@@ -93,8 +99,33 @@ class MatchController extends Controller
             }
 
             $userData = User::find($user);
+            $formattedData = MethodController::formatUserResponse($userData->id);
 
-            return MethodController::successResponse('Matches Data', MethodController::formatUserResponse($userData->id));
+            // Fetch interest status between authenticated user and target user
+            $authUserId = auth()->id();
+            $interest = DB::table('interests')
+                ->where(function($query) use ($authUserId, $user) {
+                    $query->where('sender_id', $authUserId)->where('receiver_id', $user);
+                })
+                ->orWhere(function($query) use ($authUserId, $user) {
+                    $query->where('sender_id', $user)->where('receiver_id', $authUserId);
+                })
+                ->first();
+
+            $isLiked = false;
+            if ($authUserId) {
+                $isLiked = DB::table('user_likes')
+                    ->where('liker_id', $authUserId)
+                    ->where('liked_id', $user)
+                    ->exists();
+            }
+
+            $formattedData['interest_id'] = $interest ? $interest->id : null;
+            $formattedData['interest_status'] = $interest ? $interest->status : null;
+            $formattedData['interest_sender_id'] = $interest ? $interest->sender_id : null;
+            $formattedData['is_liked'] = $isLiked;
+
+            return MethodController::successResponse('Matches Data', $formattedData);
 
         } catch (\Exception $e) {
             return MethodController::errorResponse('An unexpected error occurred.', 500);
