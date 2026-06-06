@@ -11,7 +11,7 @@ class State extends Model
 
     protected $primaryKey = 'sid';
     protected $table = 'state';
-    protected $fillable = ['name', 'status'];
+    protected $fillable = ['name', 'status', 'country_id'];
 
     public function users()
     {
