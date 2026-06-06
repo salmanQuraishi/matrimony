@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
 
     // caste
     Route::get('/get/caste/list/{religion}', [UserController::class, 'getCaste'])->name('user.caste');
+    Route::get('/get/state/list/{country}', [UserController::class, 'getState'])->name('user.state');
     Route::get('/get/city/list/{state}', [UserController::class, 'getCity'])->name('user.city');
 
     // user
@@ -155,6 +156,7 @@ Route::get('/success-stories', [\App\Http\Controllers\Frontend\HomeController::c
 
 // Dynamic Select Bindings (AJAX)
 Route::get('/ajax/castes/{religion}', [\App\Http\Controllers\Frontend\HomeController::class, 'getCastes'])->name('ajax.castes');
+Route::get('/ajax/states/{country}', [\App\Http\Controllers\Frontend\HomeController::class, 'getStates'])->name('ajax.states');
 Route::get('/ajax/cities/{state}', [\App\Http\Controllers\Frontend\HomeController::class, 'getCities'])->name('ajax.cities');
 
 // User Auth Routes (Guests only)

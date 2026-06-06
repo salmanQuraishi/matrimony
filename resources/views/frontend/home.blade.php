@@ -90,12 +90,24 @@
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-[#4A3728]/70 uppercase tracking-wider mb-2">Located in State</label>
-                            <select name="state" class="w-full rounded-xl border-[#C9A84C]/35 bg-[#FBF6EC]/30 text-[#1A1208] text-sm font-medium focus:ring-[#C9A84C] focus:border-[#C9A84C] py-3">
-                                <option value="" class="text-slate-500">Select State</option>
-                                @foreach($states as $state)
-                                    <option value="{{ $state['sid'] }}">{{ $state['name'] }}</option>
+                            <label class="block text-xs font-bold text-[#4A3728]/70 uppercase tracking-wider mb-2">Located in Country</label>
+                            <select id="homeCountrySelect" name="country" onchange="loadHomeStates(this.value)" class="w-full rounded-xl border-[#C9A84C]/35 bg-[#FBF6EC]/30 text-[#1A1208] text-sm font-medium focus:ring-[#C9A84C] focus:border-[#C9A84C] py-3">
+                                <option value="" class="text-slate-500">Select Country</option>
+                                @foreach($countries as $country)
+                                    <option value="{{ $country['id'] }}">{{ $country['name'] }}</option>
                                 @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-[#4A3728]/70 uppercase tracking-wider mb-2">Located in State</label>
+                            <select id="homeStateSelect" name="state" onchange="loadHomeCities(this.value)" class="w-full rounded-xl border-[#C9A84C]/35 bg-[#FBF6EC]/30 text-[#1A1208] text-sm font-medium focus:ring-[#C9A84C] focus:border-[#C9A84C] py-3">
+                                <option value="" class="text-slate-500">Select State</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-[#4A3728]/70 uppercase tracking-wider mb-2">Located in City</label>
+                            <select id="homeCitySelect" name="city" class="w-full rounded-xl border-[#C9A84C]/35 bg-[#FBF6EC]/30 text-[#1A1208] text-sm font-medium focus:ring-[#C9A84C] focus:border-[#C9A84C] py-3">
+                                <option value="" class="text-slate-500">Select City</option>
                             </select>
                         </div>
 
@@ -273,6 +285,61 @@
                 </a>
             @endif
         </div>
-    </div>
 </section>
+
+<script>
+    function loadHomeStates(countryId) {
+        const stateSelect = document.getElementById('homeStateSelect');
+        const citySelect = document.getElementById('homeCitySelect');
+        stateSelect.innerHTML = '<option value="">Loading states...</option>';
+        citySelect.innerHTML = '<option value="">Select City</option>';
+
+        if (!countryId) {
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            return;
+        }
+
+        fetch(`/ajax/states/${countryId}`)
+            .then(res => res.json())
+            .then(data => {
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                if (data.status && data.data) {
+                    data.data.forEach(state => {
+                        stateSelect.innerHTML += `<option value="${state.sid}">${state.name}</option>`;
+                    });
+                } else {
+                    stateSelect.innerHTML = '<option value="">No states found</option>';
+                }
+            })
+            .catch(() => {
+                stateSelect.innerHTML = '<option value="">Error loading states</option>';
+            });
+    }
+
+    function loadHomeCities(stateId) {
+        const citySelect = document.getElementById('homeCitySelect');
+        citySelect.innerHTML = '<option value="">Loading cities...</option>';
+
+        if (!stateId) {
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            return;
+        }
+
+        fetch(`/ajax/cities/${stateId}`)
+            .then(res => res.json())
+            .then(data => {
+                citySelect.innerHTML = '<option value="">Select City</option>';
+                if (data.status && data.data) {
+                    data.data.forEach(city => {
+                        citySelect.innerHTML += `<option value="${city.cityid}">${city.name}</option>`;
+                    });
+                } else {
+                    citySelect.innerHTML = '<option value="">No cities found</option>';
+                }
+            })
+            .catch(() => {
+                citySelect.innerHTML = '<option value="">Error loading cities</option>';
+            });
+    }
+</script>
 @endsection

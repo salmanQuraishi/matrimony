@@ -1,16 +1,27 @@
+@props([
+    'label' => '',
+    'id' => '',
+    'name',
+    'options' => [],
+    'selected' => null,
+    'disabled' => false,
+])
+
 @php
     $selectedValue = $selected ?? old($name);
+    $selectId = $id ?: $name;
 @endphp
 
 <div class="form-group @error($name) has-error has-feedback @enderror">
     @if($label)
-        <label for="{{ $id }}">{{ $label }}</label>
+        <label for="{{ $selectId }}">{{ $label }}</label>
     @endif
 
     <select
-        id="{{ $id }}"
+        id="{{ $selectId }}"
         name="{{ $name }}"
         {{ $attributes->merge(['class' => 'form-select form-control' . ($errors->has($name) ? ' is-invalid' : '')]) }}
+        @if($disabled) disabled @endif
     >
         <option value="" selected disabled>{{ $label }}</option>
         @foreach($options as $option)

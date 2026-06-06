@@ -29,6 +29,7 @@ class User extends Authenticatable
         'profile_for',
         'city_id',
         'state_id',
+        'country_id',
         'complexion_id',
         'name',
         'father_name',
@@ -113,6 +114,11 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Caste::class, 'caste_id', 'cid')
             ->select('cid', 'name');
+    }
+    public function country()
+    {
+        return $this->belongsTo(Countries::class, 'country_id', 'id')
+            ->select('id', 'name');
     }
     public function state()
     {

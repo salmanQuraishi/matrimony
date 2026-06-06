@@ -264,6 +264,7 @@ class AuthController extends Controller
             $request->validate([
                 'height' => ['required', 'numeric', 'min:0'],
                 'weight' => ['required', 'numeric', 'min:0'],
+                'country' => ['required', 'integer', 'exists:countries,id'],
                 'state' => ['required', 'integer', 'exists:state,sid'],
                 'city' => ['required', 'integer', 'exists:city,cityid'],
             ]);
@@ -272,6 +273,7 @@ class AuthController extends Controller
 
             $user->height = $request->height;
             $user->weight = $request->weight;
+            $user->country_id = $request->country;
             $user->state_id = $request->state;
             $user->city_id = $request->city;
             $user->save();

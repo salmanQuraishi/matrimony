@@ -58,6 +58,9 @@ class MatchController extends Controller
             // ->when(!is_null($user->caste_id), function ($query) use ($user) {
             //     return $query->where('caste_id', $user->caste_id);
             // })
+            ->when($request->country, function ($query) use ($request) {
+                return $query->where('country_id', $request->country);
+            })
             ->when($request->state, function ($query) use ($request) {
                 return $query->where('state_id', $request->state);
             })

@@ -12,13 +12,13 @@ class HomeController extends Controller
     {
         // Fetch metadata for quick search
         $religions = InternalApi::call('GET', '/api/get/religion/list');
-        $states = InternalApi::call('GET', '/api/get/state/list');
+        $countries = InternalApi::call('GET', '/api/get/country/list');
         $profileFors = InternalApi::call('GET', '/api/get/profilefor/list');
         $complexions = InternalApi::call('GET', '/api/get/complexion/list');
 
         return view('frontend.home', [
             'religions' => $religions['data'] ?? [],
-            'states' => $states['data'] ?? [],
+            'countries' => $countries['data'] ?? [],
             'profileFors' => $profileFors['data'] ?? [],
             'complexions' => $complexions['data'] ?? [],
         ]);
@@ -53,6 +53,12 @@ class HomeController extends Controller
     public function getCastes($religionId)
     {
         $response = InternalApi::call('GET', "/api/get/caste/list/{$religionId}");
+        return response()->json($response);
+    }
+
+    public function getStates($countryId)
+    {
+        $response = InternalApi::call('GET', "/api/get/state/list/{$countryId}");
         return response()->json($response);
     }
 

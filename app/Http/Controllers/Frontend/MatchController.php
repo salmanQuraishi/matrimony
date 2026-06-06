@@ -12,11 +12,18 @@ class MatchController extends Controller
     {
         $token = session('user_token');
         
-        // Fetch states for filter dropdown
-        $states = InternalApi::call('GET', '/api/get/state/list');
+        // Fetch countries for filter dropdown
+        $countries = InternalApi::call('GET', '/api/get/country/list');
+
+        // Fetch states for currently selected country in filter
+        $states = [];
+        if ($request->filled('country')) {
+            $statesResponse = InternalApi::call('GET', "/api/get/state/list/" . $request->country);
+            $states = $statesResponse['data'] ?? [];
+        }
 
         // Fetch matches using filters passed in request
-        $response = InternalApi::call('GET', '/api/get/matches', $request->only('state', 'city', 'age_min', 'age_max'), $token);
+        $response = InternalApi::call('GET', '/api/get/matches', $request->only('country', 'state', 'city', 'age_min', 'age_max'), $token);
         
         $matches = [];
         if (isset($response['status']) && $response['status']) {
@@ -32,7 +39,8 @@ class MatchController extends Controller
 
         return view('frontend.user.matches', [
             'matches' => $matches,
-            'states' => $states['data'] ?? [],
+            'countries' => $countries['data'] ?? [],
+            'states' => $states,
             'cities' => $cities,
             'filters' => $request->all(),
         ]);

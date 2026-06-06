@@ -338,18 +338,21 @@
                             </div>
 
                             <div class="col-md-3">
-                                @php
-                                    $stateId = collect($States)->firstWhere('name', 'Uttar Pradesh')->id ?? null;
-                                @endphp
-
                                 <x-user-select
-                                    label="State"
-                                    id="StateSelect"
-                                    name="state_id"
-                                    :options="$States"
-                                    :selected="old('state_id', $user->state_id ?? $stateId)"
+                                    label="Country"
+                                    id="countrySelect"
+                                    name="country_id"
+                                    :options="$Countries"
+                                    :selected="old('country_id', $user->country_id)"
                                     :disabled="$disabled"
                                 />
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="StateSelect">State</label>
+                                    <select id="StateSelect" name="state_id" class="form-select form-control" {{ $disabled }}></select>
+                                </div>
                             </div>
 
                             <div class="col-md-3">
@@ -447,6 +450,42 @@
 <script>
 $(document).ready(function () {
 
+    function loadStates(selectedState = null, selectedCity = null) {
+        let country = $("#countrySelect").val();
+
+        if (!country) {
+            $("#StateSelect").html('<option value="">Select State</option>');
+            $("#citySelect").html('<option value="">Select City</option>');
+            return;
+        }
+
+        let url = "{{ route('user.state', ':country') }}".replace(':country', country);
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                let stateSelect = $("#StateSelect");
+                stateSelect.empty();
+                stateSelect.append('<option value="">Select State</option>');
+
+                $.each(response.states, function (key, value) {
+                    let selected = (value.id == selectedState) ? 'selected' : '';
+                    stateSelect.append('<option value="' + value.id + '" ' + selected + '>' + value.name + '</option>');
+                });
+
+                if (selectedState) {
+                    loadCities(selectedCity);
+                } else {
+                    $("#citySelect").html('<option value="">Select City</option>');
+                }
+            },
+            error: function (xhr) {
+                console.error('Error fetching states:', xhr);
+            }
+        });
+    }
+
     function loadCities(selectedCity = null) {
         let state = $("#StateSelect").val();
 
@@ -512,6 +551,10 @@ $(document).ready(function () {
         });
     }
 
+    $("#countrySelect").change(function () {
+        loadStates(null, null);
+    });
+
     $("#StateSelect").change(function () {
         loadCities(null);
     });
@@ -520,7 +563,7 @@ $(document).ready(function () {
         loadCastes(null);
     });
 
-    loadCities({{ $user->city_id ?? 'null' }});
+    loadStates({{ $user->state_id ?? 'null' }}, {{ $user->city_id ?? 'null' }});
     loadCastes({{ $user->caste_id ?? 'null' }});
 
 });

@@ -39,6 +39,7 @@ class MethodController extends Controller
                 'caste' => $user->caste ?? null,
                 'state' => $user->state ?? null,
                 'city' => $user->city ?? null,
+                'country' => $user->country ?? null,
                 'galleries' => $user->galleries ?? null,
                 'complexion' => $user->complexion ?? null,
             ];
@@ -47,7 +48,7 @@ class MethodController extends Controller
 
     public static function formatUserResponse($user)
     {
-        $user = User::with('complexion', 'profileFor', 'education', 'occupation', 'annualIncome', 'jobType', 'companyType', 'religion', 'caste', 'state', 'city', 'galleries')->where('id', $user)->first();
+        $user = User::with('country', 'complexion', 'profileFor', 'education', 'occupation', 'annualIncome', 'jobType', 'companyType', 'religion', 'caste', 'state', 'city', 'galleries')->where('id', $user)->first();
 
         $profileCompletion = self::profileCompletion($user->id);
 
@@ -81,6 +82,7 @@ class MethodController extends Controller
             'caste' => $user->caste ?? null,
             'state' => $user->state ?? null,
             'city' => $user->city ?? null,
+            'country' => $user->country ?? null,
             'galleries' => $user->galleries ?? null,
             'complexion' => $user->complexion ?? null,
         ];
@@ -105,6 +107,7 @@ class MethodController extends Controller
             'profile_for',
             'city_id',
             'state_id',
+            'country_id',
             'complexion_id',
             'name',
             'father_name',

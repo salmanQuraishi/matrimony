@@ -29,7 +29,8 @@ Route::get('/get/annual/income/list', [CommonController::class, 'getAnnualIncome
 Route::get('/get/job/type/list', [CommonController::class, 'getJobType']);
 Route::get('/get/company/type/list', [CommonController::class, 'getCompanyType']);
 
-Route::get('/get/state/list', [CommonController::class, 'getState']);
+Route::get('/get/country/list', [CommonController::class, 'getCountry']);
+Route::get('/get/state/list/{country?}', [CommonController::class, 'getState']);
 Route::get('/get/city/list/{state}', [CommonController::class, 'getCity']);
 
 Route::middleware('auth:sanctum')->group(function () {

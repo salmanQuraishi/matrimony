@@ -190,6 +190,17 @@
                                    class="w-full rounded-2xl border-slate-200 text-slate-700 text-sm focus:ring-rose-500 focus:border-rose-500 py-3.5" placeholder="e.g. 65">
                         </div>
 
+                        <!-- Country -->
+                        <div>
+                            <label for="country" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Country</label>
+                            <select id="country" name="country" required onchange="loadStates(this.value)"
+                                    class="w-full rounded-2xl border-slate-200 text-slate-700 text-sm focus:ring-rose-500 focus:border-rose-500 py-3.5">
+                                <option value="">Select Country</option>
+                                @foreach($countries as $item)
+                                    <option value="{{ $item['id'] }}" {{ old('country', $authUser['country']['id'] ?? '') == $item['id'] ? 'selected' : '' }}>{{ $item['name'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <!-- State -->
                         <div>
                             <label for="state" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">State</label>
@@ -400,6 +411,35 @@
             })
             .catch(() => {
                 casteSelect.innerHTML = '<option value="">Error loading castes</option>';
+            });
+    }
+
+    // AJAX to load states
+    function loadStates(countryId) {
+        const stateSelect = document.getElementById('state');
+        const citySelect = document.getElementById('city');
+        stateSelect.innerHTML = '<option value="">Loading states...</option>';
+        citySelect.innerHTML = '<option value="">Select City</option>';
+
+        if (!countryId) {
+            stateSelect.innerHTML = '<option value="">Select State</option>';
+            return;
+        }
+
+        fetch(`/ajax/states/${countryId}`)
+            .then(res => res.json())
+            .then(data => {
+                stateSelect.innerHTML = '<option value="">Select State</option>';
+                if (data.status && data.data) {
+                    data.data.forEach(state => {
+                        stateSelect.innerHTML += `<option value="${state.sid}">${state.name}</option>`;
+                    });
+                } else {
+                    stateSelect.innerHTML = '<option value="">No states found</option>';
+                }
+            })
+            .catch(() => {
+                stateSelect.innerHTML = '<option value="">Error loading states</option>';
             });
     }
 

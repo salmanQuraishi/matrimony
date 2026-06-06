@@ -21,6 +21,18 @@
                 </div>
 
                 <form action="{{ route('user.matches') }}" method="GET" class="space-y-4">
+                    <!-- Country -->
+                    <div>
+                        <label for="filter_country" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Country</label>
+                        <select id="filter_country" name="country" onchange="loadFilterStates(this.value)"
+                                class="w-full rounded-2xl border-slate-200 text-slate-700 text-sm focus:ring-rose-500 focus:border-rose-500 py-3">
+                            <option value="">All Countries</option>
+                            @foreach($countries as $item)
+                                <option value="{{ $item['id'] }}" {{ ($filters['country'] ?? '') == $item['id'] ? 'selected' : '' }}>{{ $item['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     <!-- State -->
                     <div>
                         <label for="filter_state" class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">State</label>
@@ -157,6 +169,35 @@
 </div>
 
 <script>
+    // AJAX for filter state loading
+    function loadFilterStates(countryId) {
+        const stateSelect = document.getElementById('filter_state');
+        const citySelect = document.getElementById('filter_city');
+        stateSelect.innerHTML = '<option value="">Loading states...</option>';
+        citySelect.innerHTML = '<option value="">All Cities</option>';
+
+        if (!countryId) {
+            stateSelect.innerHTML = '<option value="">All States</option>';
+            return;
+        }
+
+        fetch(`/ajax/states/${countryId}`)
+            .then(res => res.json())
+            .then(data => {
+                stateSelect.innerHTML = '<option value="">All States</option>';
+                if (data.status && data.data) {
+                    data.data.forEach(state => {
+                        stateSelect.innerHTML += `<option value="${state.sid}">${state.name}</option>`;
+                    });
+                } else {
+                    stateSelect.innerHTML = '<option value="">No states found</option>';
+                }
+            })
+            .catch(() => {
+                stateSelect.innerHTML = '<option value="">Error loading states</option>';
+            });
+    }
+
     // AJAX for filter city loading
     function loadFilterCities(stateId) {
         const citySelect = document.getElementById('filter_city');

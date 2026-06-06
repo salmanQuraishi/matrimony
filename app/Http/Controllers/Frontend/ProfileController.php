@@ -26,7 +26,14 @@ class ProfileController extends Controller
         $annualIncomes = InternalApi::call('GET', '/api/get/annual/income/list');
         $jobTypes = InternalApi::call('GET', '/api/get/job/type/list');
         $companyTypes = InternalApi::call('GET', '/api/get/company/type/list');
-        $states = InternalApi::call('GET', '/api/get/state/list');
+        $countries = InternalApi::call('GET', '/api/get/country/list');
+
+        // Fetch states for user's country if set
+        $states = [];
+        if (!empty($user['country']['id'])) {
+            $statesResponse = InternalApi::call('GET', "/api/get/state/list/" . $user['country']['id']);
+            $states = $statesResponse['data'] ?? [];
+        }
 
         // Fetch castes for user's religion if set
         $castes = [];
@@ -50,7 +57,8 @@ class ProfileController extends Controller
             'annualIncomes' => $annualIncomes['data'] ?? [],
             'jobTypes' => $jobTypes['data'] ?? [],
             'companyTypes' => $companyTypes['data'] ?? [],
-            'states' => $states['data'] ?? [],
+            'countries' => $countries['data'] ?? [],
+            'states' => $states,
             'castes' => $castes,
             'cities' => $cities,
         ]);

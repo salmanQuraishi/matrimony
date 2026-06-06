@@ -17,6 +17,7 @@ use App\Models\Occupation;
 use App\Models\Religion;
 use App\Models\State;
 use App\Models\City;
+use App\Models\Countries;
 use App\Models\Complexion;
 use App\Models\Gallery;
 use App\Models\UserNotification;
@@ -205,10 +206,29 @@ class CommonController extends Controller
             return MethodController::errorResponse('An unexpected error occurred.', 500);
         }
     }
-    public function getState()
+    public function getCountry()
     {
         try {
-            $State = State::where('status', 'Active')->get(['sid', 'name']);
+            $countries = Countries::all(['id', 'name']);
+
+            if ($countries->isEmpty()) {
+                return MethodController::errorResponse('Country Data not found', 404);
+            }
+
+            return MethodController::successResponse('Country Data', $countries);
+
+        } catch (\Exception $e) {
+            return MethodController::errorResponse('An unexpected error occurred.', 500);
+        }
+    }
+    public function getState($country = null)
+    {
+        try {
+            $query = State::where('status', 'Active');
+            if ($country !== null) {
+                $query->where('country_id', $country);
+            }
+            $State = $query->get(['sid', 'name']);
 
             if ($State->isEmpty()) {
                 return MethodController::errorResponse('State Data not found', 404);
@@ -229,7 +249,7 @@ class CommonController extends Controller
             );
             ;
             $Caste = City::where('state_id', $state)
-                ->where('status', 'Active')
+                ->where('active', 'active')
                 ->orderBy('name', 'asc')
                 ->get(['cityid', 'name']);
 

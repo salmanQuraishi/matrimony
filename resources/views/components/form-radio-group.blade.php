@@ -2,7 +2,8 @@
     'label' => '',
     'name',
     'options' => [],
-    'selected' => null
+    'selected' => null,
+    'disabled' => false,
 ])
 
 <div class="form-group @error($name) has-error has-feedback @enderror">
@@ -20,6 +21,7 @@
                     value="{{ $value }}"
                     {{ $selected == $value ? 'checked' : '' }}
                     {{ $attributes->class('form-check-input') }}
+                    @if($disabled) disabled @endif
                 >
                 <label class="form-check-label" for="{{ $name }}_{{ $value }}">
                     {{ $text }}

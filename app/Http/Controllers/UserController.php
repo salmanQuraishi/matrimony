@@ -18,6 +18,7 @@ use App\Models\Complexion;
 use App\Models\Education;
 use App\Models\Occupation;
 use App\Models\State;
+use App\Models\Countries;
 
 class UserController extends Controller
 {
@@ -32,6 +33,8 @@ class UserController extends Controller
         $religions = Religion::where('status', 'show')
             ->select('rid as id', 'name')
             ->get();
+
+        $Countries = Countries::select('id', 'name')->get();
 
         $States = State::where('status', 'active')
             ->select('sid as id', 'name')
@@ -70,7 +73,7 @@ class UserController extends Controller
             });
 
         $user = User::findOrFail($id);
-        return view('user.view', compact('user', 'religions', 'States', 'ProfileTypes', 'CompanyType', 'JobType', 'AnnualIncome', 'Occupation', 'Education', 'Complexions'));
+        return view('user.view', compact('user', 'Countries', 'religions', 'States', 'ProfileTypes', 'CompanyType', 'JobType', 'AnnualIncome', 'Occupation', 'Education', 'Complexions'));
     }
 
     public function update(Request $request, $id)
@@ -90,6 +93,7 @@ class UserController extends Controller
             'caste_id' => 'nullable|exists:castes,cid',
             'height' => 'nullable|string',
             'weight' => 'nullable|string',
+            'country_id' => 'required|exists:countries,id',
             'state_id' => 'required|exists:state,sid',
             'city_id' => 'required|exists:city,cityid',
             'education_id' => 'required|exists:educations,eid',
@@ -141,6 +145,7 @@ class UserController extends Controller
         $user->caste_id = $request->input('caste_id');
         $user->height = $request->input('height');
         $user->weight = $request->input('weight');
+        $user->country_id = $request->input('country_id');
         $user->state_id = $request->input('state_id');
         $user->city_id = $request->input('city_id');
         $user->education_id = $request->input('education_id');
@@ -260,7 +265,7 @@ class UserController extends Controller
             }
 
             $cities = City::where('state_id', $state)
-                ->where('status', 'active')
+                ->where('active', 'active')
                 ->get(['cityid as id', 'name']);
 
             if ($cities->isEmpty()) {
@@ -282,5 +287,29 @@ class UserController extends Controller
         }
     }
 
+    public function getState($country)
+    {
+        try {
+            $states = State::where('country_id', $country)
+                ->where('status', 'active')
+                ->get(['sid as id', 'name']);
 
+            if ($states->isEmpty()) {
+                return response()->json([
+                    'message' => 'State data not found'
+                ], 404);
+            }
+
+            return response()->json([
+                'message' => 'State data fetched successfully',
+                'states' => $states
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An unexpected error occurred.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

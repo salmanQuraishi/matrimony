@@ -5,6 +5,8 @@
     'rows' => 3,
     'value' => '',
     'placeholder' => '',
+    'readonly' => false,
+    'disabled' => false,
 ])
 
 <div class="form-group @error($name) has-error has-feedback @enderror">
@@ -20,6 +22,8 @@
         rows="{{ $rows }}"
         placeholder="{{ $placeholder }}"
         {{ $attributes->merge(['class' => 'form-control' . ($errors->has($name) ? ' is-invalid' : '')]) }}
+        @if($readonly) readonly @endif
+        @if($disabled) disabled @endif
     >{{ old($name, $value) }}</textarea>
 
     @error($name)
