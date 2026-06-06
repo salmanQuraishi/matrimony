@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
 
     // user
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
-    Route::get('/user/view/{id}', [UserController::class, 'edit'])->name('user.view');
+    Route::get('/user/view/{id}', [UserController::class, 'viewDisabled'])->name('user.view');
     Route::get('/user/edit/{id}', [UserController::class, 'edit'])->name('user.edit');
     Route::put('/user/update/{id}', [UserController::class, 'update'])->name('user.update');
     Route::get('/user/gallery/{id}', [UserController::class, 'gallery'])->name('gallery.index');

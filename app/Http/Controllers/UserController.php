@@ -28,6 +28,53 @@ class UserController extends Controller
         return view('user.index', compact('users'));
     }
 
+    public function viewDisabled($id)
+    {
+        $religions = Religion::where('status', 'show')
+            ->select('rid as id', 'name')
+            ->get();
+
+        $Countries = Countries::select('id', 'name')->get();
+
+        $States = State::where('status', 'active')
+            ->select('sid as id', 'name')
+            ->get();
+
+        $ProfileTypes = ProfileType::where('status', 'show')
+            ->select('ptid as id', 'name')
+            ->get();
+
+        $CompanyType = CompanyType::where('status', 'show')
+            ->select('ctid as id', 'name')
+            ->get();
+
+        $JobType = JobType::where('status', 'show')
+            ->select('jtid as id', 'name')
+            ->get();
+
+        $AnnualIncome = AnnualIncome::where('status', 'show')
+            ->select('aid as id', 'range as name')
+            ->get();
+
+        $Occupation = Occupation::where('status', 'show')
+            ->select('oid as id', 'name')
+            ->get();
+
+        $Education = Education::where('status', 'show')
+            ->select('eid as id', 'name')
+            ->get();
+
+        $Complexions = Complexion::where('status', 'show')
+            ->select('id', 'name', 'hindi_name')
+            ->get()
+            ->map(function ($item) {
+                $item->name = $item->name . ' (' . $item->hindi_name . ')';
+                return $item;
+            });
+
+        $user = User::findOrFail($id);
+        return view('user.viewDisabled', compact('user', 'Countries', 'religions', 'States', 'ProfileTypes', 'CompanyType', 'JobType', 'AnnualIncome', 'Occupation', 'Education', 'Complexions'));
+    }
     public function edit($id)
     {
         $religions = Religion::where('status', 'show')

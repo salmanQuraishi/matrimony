@@ -1,4 +1,10 @@
 <x-app-layout>
+@php
+    $readonly = 'readonly';
+    $disabled = 'disabled';
+
+@endphp
+
 <div class="container">
     <div class="page-inner">
         <div class="row">
@@ -6,12 +12,10 @@
 
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-title">Edit User</div>
+                        <div class="card-title">View User</div>
                     </div>
 
-                    <form action="{{ route('user.update', $user->id) }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
+
 
                     <div class="card-body">
 
@@ -22,7 +26,7 @@
                             <div class="col-md-10">
                                 <div class="form-group">
                                     <label for="profile_image">Profile Image</label>
-                                    <input type="file" name="profile_image" id="profile_image" class="form-control">
+                                    <input type="file" name="profile_image" id="profile_image" class="form-control" {{ $disabled }}>
                                     @error('profile_image')
                                         <small class="text-danger">{{ $message }}</small>
                                     @enderror
@@ -65,7 +69,7 @@
                                     name="profile_for"
                                     :options="$ProfileTypes"
                                     :selected="old('profile_for', $user->profile_for)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -77,8 +81,8 @@
                                     name="name"
                                     :value="old('name', $user->name)"
                                     placeholder="Enter User Name"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -90,8 +94,8 @@
                                     name="mobile"
                                     :value="old('mobile', $user->mobile)"
                                     placeholder="Enter User Mobile"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
                         </div>
@@ -111,8 +115,8 @@
                                     :value="old('age', $user->age)"
                                     placeholder="Enter User Age"
                                     min="0"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -124,8 +128,8 @@
                                     name="dob"
                                     :value="old('dob', $user->dob)"
                                     placeholder="Enter User DOB"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -137,8 +141,8 @@
                                     name="email"
                                     :value="old('email', $user->email)"
                                     placeholder="Enter User Email"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -148,7 +152,7 @@
                                     name="gender"
                                     :options="['male' => 'Male', 'female' => 'Female', 'other' => 'Other']"
                                     :selected="old('gender', $user->gender)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -160,8 +164,8 @@
                                     name="birthplace"
                                     :value="old('birthplace', $user->birthplace)"
                                     placeholder="Enter Place of Birth"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -172,7 +176,7 @@
                                     name="complexion_id"
                                     :options="$Complexions"
                                     :selected="old('complexion_id', $user->complexion_id)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
                         </div>
@@ -186,8 +190,8 @@
                                     rows="3"
                                     placeholder="Enter About Myself"
                                     :value="old('myself', $user->myself)"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -199,8 +203,8 @@
                                     rows="3"
                                     placeholder="Enter Address"
                                     :value="old('address', $user->address)"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
                         </div>
@@ -219,8 +223,8 @@
                                     name="father_name"
                                     :value="old('father_name', $user->father_name)"
                                     placeholder="Enter Father Name"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -232,8 +236,8 @@
                                     name="mother_name"
                                     :value="old('mother_name', $user->mother_name)"
                                     placeholder="Enter Mother Name"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -246,8 +250,8 @@
                                     :value="old('brothers', $user->brothers)"
                                     placeholder="Enter Brothers"
                                     min="0"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -260,8 +264,8 @@
                                     :value="old('sisters', $user->sisters)"
                                     placeholder="Enter Sisters"
                                     min="0"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
                         </div>
@@ -283,14 +287,14 @@
                                     name="religion_id"
                                     :options="$religions"
                                     :selected="old('religion_id', $user->religion_id ?? $muslimId)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="casteSelect">Caste</label>
-                                    <select id="casteSelect" name="caste_id" class="form-select form-control"></select>
+                                    <select id="casteSelect" name="caste_id" class="form-select form-control" {{ $disabled }}></select>
                                 </div>
                             </div>
                         </div>
@@ -309,8 +313,8 @@
                                     name="height"
                                     :value="old('height', $user->height)"
                                     placeholder="Enter User Height"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -322,8 +326,8 @@
                                     name="weight"
                                     :value="old('weight', $user->weight)"
                                     placeholder="Enter User Weight"
-                                    
-                                    
+                                    :readonly="$readonly"
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -334,21 +338,21 @@
                                     name="country_id"
                                     :options="$Countries"
                                     :selected="old('country_id', $user->country_id)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="StateSelect">State</label>
-                                    <select id="StateSelect" name="state_id" class="form-select form-control"></select>
+                                    <select id="StateSelect" name="state_id" class="form-select form-control" {{ $disabled }}></select>
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="citySelect">City</label>
-                                    <select id="citySelect" name="city_id" class="form-select form-control"></select>
+                                    <select id="citySelect" name="city_id" class="form-select form-control" {{ $disabled }}></select>
                                 </div>
                             </div>
                         </div>
@@ -366,7 +370,7 @@
                                     name="education_id"
                                     :options="$Education"
                                     :selected="old('education_id', $user->education_id)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -377,7 +381,7 @@
                                     name="job_type_id"
                                     :options="$JobType"
                                     :selected="old('job_type_id', $user->job_type_id)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -388,7 +392,7 @@
                                     name="company_type_id"
                                     :options="$CompanyType"
                                     :selected="old('company_type_id', $user->company_type_id)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -399,7 +403,7 @@
                                     name="occupation_id"
                                     :options="$Occupation"
                                     :selected="old('occupation_id', $user->occupation_id)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
 
@@ -410,20 +414,12 @@
                                     name="annual_income_id"
                                     :options="$AnnualIncome"
                                     :selected="old('annual_income_id', $user->annual_income_id)"
-                                    
+                                    :disabled="$disabled"
                                 />
                             </div>
                         </div>
 
                     </div>
-
-                        <div class="card-action">
-                            <button class="btn btn-success" type="submit">
-                                Update
-                            </button>
-                        </div>
-
-                        </form>
 
                 </div>
 
